@@ -7,7 +7,7 @@ Learn how to create and configure a file search agent using Azure AI Agent Servi
 - Azure account with necessary permissions
 - Python environment with required packages installed
 - Azure AI Project connection string
-- Deployed text completion model, such as gpt-4o or gpt-4o-mini, in Azure AI Project
+- Deployed chat completion model, such as gpt-4o, in Azure AI Project
 
 #### Step-by-Step Guide:
 
