@@ -25,12 +25,12 @@ az_model_client = AzureOpenAIChatCompletionClient(
     azure_ad_token_provider=token_provider,
 )
 
-# Set up the Azure AI Agent as an Autogen assistant agent
+# Set up the Bing search Azure AI Agent as an Autogen assistant agent
 bing_search_agent = AssistantAgent(
-    name="assistant",
+    name="bing_search_agent",
     model_client=az_model_client,
     tools=[web_ai_agent],
-    system_message="Use tools to solve tasks.",
+    system_message="You are a search expert, help me use tools to find relevant knowledge.",
 )
 
 # Create a function to run the assistant agent
