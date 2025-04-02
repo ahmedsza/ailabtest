@@ -7,20 +7,22 @@ import os
 # Load environment variables from .env file
 load_dotenv()
 
-# Set up the project client
-project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
-)
-
-# Get the connection ID for the Bing connection
-bing_connection = project_client.connections.get(
-    connection_name=os.environ["BING_CONNECTION_NAME"],
-)
-conn_id = bing_connection.id
-
 # Create an AI Agent, which will use the Bing connection to search the web
 async def web_ai_agent(query: str) -> str:
+    print(f"Searching the web for query: {query}")
+
+    # Set up the project client
+    project_client = AIProjectClient.from_connection_string(
+        credential=DefaultAzureCredential(),
+        conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+    )
+
+    # Get the connection ID for the Bing connection
+    bing_connection = project_client.connections.get(
+        connection_name=os.environ["BING_CONNECTION_NAME"],
+    )
+    conn_id = bing_connection.id
+
     returnMessage = "No response from the agent."
 
     with project_client:
