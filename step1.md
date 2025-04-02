@@ -6,93 +6,132 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 #### Prerequisites:
 - Azure account with necessary permissions
 - Python environment with required packages installed
+- Azure AI Project connection string
+- Deployed text completion model, such as gpt-4o or gpt-4o-mini, in Azure AI Project
 
 #### Step-by-Step Guide:
 
 1. **Install Required Packages**
-   Ensure you have the required packages installed. You can use the following command to list installed packages:
-   ```python
-   !pip list
-   ```
 
-2. **Import Necessary Libraries**
-   Import the necessary libraries for Azure AI Agent Service:
-   ```python
-   from azure.ai.projects import AIProjectClient
-   from azure.ai.projects.models import CodeInterpreterTool
-   from azure.identity import DefaultAzureCredential
-   import os
-   ```
+	Ensure you have the required packages installed. You will need the following packages:
+	```python
+	azure-ai-projects
+	azure-identity
+	dotenv
+	```
 
-3. **Initialize the Project Client**
-   Initialize the AIProjectClient using your Azure AI Foundation connection string:
-   ```python
-   project_client = AIProjectClient.from_connection_string(
-       credential=DefaultAzureCredential(),
-       conn_str='Your Azure AI Foundation Connection String',
-   )
-   ```
+2. **Set Up Environment Variables**
 
-4. **Create and Configure the Agent**
-   Create and configure the code interpreter agent:
-   ```python
-   with project_client:
-       code_interpreter = CodeInterpreterTool()
-       
-       agent = project_client.agents.create_agent(
-           model="gpt-4o-mini",
-           name="my-agent",
-           instructions="You are a helpful agent",
-           tools=code_interpreter.definitions,
-       )
-   ```
+	Create a `.env` file in your project directory and add your Azure AI Project connection string, and deployment model name:
+	```plaintext
+	PROJECT_CONNECTION_STRING=""
+	MODEL_DEPLOYMENT_NAME=""
+	```
 
-5. **Create a Thread and Message**
-   Create a thread for communication and send a message with instructions for the agent:
-   ```python
-   thread = project_client.agents.create_thread()
+3. **Import Necessary Libraries**
 
-   message = project_client.agents.create_message(
-       thread_id=thread.id,
-       role="user",
-       content="""
-           You are my Python programming assistant. Generate code and execute it according to the following requirements:
+	Import the necessary libraries for Azure AI Agent Service, and load the environment variables:
+	```python
+	from azure.ai.projects import AIProjectClient
+	from azure.ai.projects.models import CodeInterpreterTool
+	from azure.identity import DefaultAzureCredential
+	from dotenv import load_dotenv
+	import os
+	
+	# Load environment variables from .env file
+	load_dotenv()
+	```
 
-           1. Save "this is blog" to blog-{YYMMDDHHMMSS}.md
-           2. Give me the download link for this file
-       """,
-   )
-   ```
+4. **Initialize the Project Client**
 
-6. **Execute the Run**
-   Create and execute the run to process the message:
-   ```python
-   run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-   print(f"Run finished with status: {run.status}")
+	Initialize the AIProjectClient using your Azure AI Project connection string:
+	```python
+	# Set up the project client
+	project_client = AIProjectClient.from_connection_string(
+		credential=DefaultAzureCredential(),
+		conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+	)
+	```
 
-   if run.status == "failed":
-       print(f"Run failed: {run.last_error}")
-   ```
+5. **Create and Configure the Agent**
 
-7. **Retrieve and Save the File**
-   Retrieve the generated file and save it locally:
-   ```python
-   messages = project_client.agents.get_messages(thread_id=thread.id)
-   print(f"Messages: {messages}")
+	Create and configure the code interpreter agent:
+	```python
+	with project_client:
+		# Create a Code Interpreter tool
+		code_interpreter = CodeInterpreterTool()
+		
+		# Create an agent with the Code Interpreter tool
+		agent = project_client.agents.create_agent(
+			model=os.environ["MODEL_DEPLOYMENT_NAME"],
+			name="my-agent",
+			instructions="You are a helpful agent",
+			tools=code_interpreter.definitions,
+		)
+	```
 
-   last_msg = messages.get_last_text_message_by_sender("assistant")
-   if last_msg:
-       print(f"Last Message: {last_msg.text.value}")
+6. **Create a Thread and Message**
 
-   for file_path_annotation in messages.file_path_annotations:
-       file_name = os.path.basename(file_path_annotation.text)
-       project_client.agents.save_file(file_id=file_path_annotation.file_path.file_id, file_name=file_name, target_dir="./blog")
-   ```
+	Create a thread for communication and send a message with instructions for the agent:
+	```python
+        # Create a thread for our interaction with the agent
+        thread = project_client.agents.create_thread()
 
-8. **Download the File**
-   Once the file is saved, you can download it using the provided link:
-   ```plaintext
-   [Download blog-241231132844.md](sandbox:/mnt/data/blog-241231132844.md)
-   ```
+        # Create a message to send to the agent on the created thread
+        message = project_client.agents.create_message(
+            thread_id=thread.id,
+            role="user",
+            content="""
+                You are my Python programming assistant. Generate code and execute it according to the following requirements:
+
+                1. Save "this is blog" to blog-{YYMMDDHHMMSS}.md
+                2. Give me the download link for this file
+            """,
+        )
+	```
+
+7. **Execute the Run**
+
+	Create and execute the run to process the message:
+	```python
+        # Process the message with the agent, synchronously
+        run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        print(f"Run finished with status: {run.status}")
+	```
+
+8. **Display the Response Message and Save File**
+
+	Display the response message, retrieve the generated file and save it locally:
+	```python
+        # Check the status of the run
+        if run.status == "failed":
+            print(f"Run failed: {run.last_error}")
+        else:
+            # Get the response messages
+            messages = project_client.agents.list_messages(thread_id=thread.id)
+
+            # Print the last message from the assistant
+            last_msg = messages.get_last_message_by_role("assistant")
+            if last_msg:
+                print(f"Last Message: {last_msg.content[0].text.value}")
+
+            # Save the file generated by the assistant
+            for file_path_annotation in messages.file_path_annotations:
+                file_name = os.path.basename(file_path_annotation.text)
+                project_client.agents.save_file(file_id=file_path_annotation.file_path.file_id, file_name=file_name, target_dir="./blog")
+	```
+
+9. **Delete the Thread and Agent**
+
+    After processing, delete the thread and agent to clean up resources:
+    ```python
+        # Clean up resources
+        project_client.agents.delete_thread(thread.id)
+        project_client.agents.delete_agent(agent.id)
+    ```
+
+10. **View the File**
+
+	Once complete, you can find the file in the `blog` subdirectory of your project directory. The file will be named `blog-{YYMMDDHHMMSS}.md`, where `{YYMMDDHHMMSS}` is the timestamp when the file was created.
 
 By following these steps, you will create a code interpreter agent that generates and executes Python code to save output to a file, leveraging Azure AI Agent Service.
