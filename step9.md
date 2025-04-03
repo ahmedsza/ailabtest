@@ -626,6 +626,6 @@ await foreach (ChatMessageContent content in chat.InvokeAsync())
     dotnet run
     ```
 
-To validate you should see some output, and a markdown file should be created in \bin\Debug\net9.0\blog folder.
+To validate you should see some output, and a markdown file should be created in \bin\Debug\net9.0\ folder.
 
 Congratulations! You have successfully created a C# console application that uses Azure AI Agent Service with Semantic Kernel and Bing Grounding to search for information, write a blog based on the search results, and save the blog content.
