@@ -41,8 +41,8 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
    ```
 
 3. **Import Namespaces**
-   Open the solution in Visual Studio or Visual Studio Code.
-   Import the necessary namespaces for the Azure SDKs at the top of your `Program.cs` file:
+   - Open the solution in Visual Studio or Visual Studio Code.
+   - Import the necessary namespaces for the Azure SDKs at the top of your `Program.cs` file:
    ```csharp
    using System;
    using System.Collections.Generic;
