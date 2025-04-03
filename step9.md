@@ -523,8 +523,8 @@ ChatCompletionAgent save_blog_agent =
 
 4. #### Create the Write Blog Agent
 ```csharp
-private const string WriteBlogName = "WriteBlog";
-private const string WriteBlogInstructions =
+ const string WriteBlogName = "WriteBlog";
+ const string WriteBlogInstructions =
         """
         You are a blog writer, please help me write a blog based on bing search content.
         """;
