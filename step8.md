@@ -40,7 +40,7 @@ Install the required packages by running the following commands:
    dotnet add package Microsoft.SemanticKernel.Connectors.AzureOpenAI --version 1.32.0-alpha
    dotnet add package Azure.AI.Projects --version 1.0.0-beta.2
    dotnet add package Azure.Identity --version 1.13.1
-   
+
    ```
 
 
@@ -136,7 +136,7 @@ Let's break down the implementation of the Search Plugin into manageable steps:
 5. **Create Agent Instance**
     ```csharp
     Azure.Response<Azure.AI.Projects.Agent> agentResponse = await agentClient.CreateAgentAsync(
-         model: "gpt-4o-mini",
+         model: "gpt-4o",
          name: "my-assistant",
          instructions: "You are a helpful assistant.",
          tools: new List<ToolDefinition> { bingGroundingTool });
@@ -230,7 +230,7 @@ public sealed class SearchPlugin
         BingGroundingToolDefinition bingGroundingTool = new BingGroundingToolDefinition(connectionList);
 
         Azure.Response<Azure.AI.Projects.Agent> agentResponse = await agentClient.CreateAgentAsync(
-            model: "gpt-4o-mini",
+            model: "gpt-4o",
             name: "my-assistant",
             instructions: "You are a helpful assistant.",
             tools: new List<ToolDefinition> { bingGroundingTool });
@@ -301,7 +301,7 @@ Let's break down the implementation of the chat completion agent into steps:
     ```csharp
     public static async Task Main(string[] args)
     {
-         var deployment = "gpt-4o-mini";
+         var deployment = "gpt-4o";
          var endpoint = "Your AOAI endpoint";
          var key = "Your AOAI Key";
     }
@@ -374,7 +374,7 @@ public partial class Program
 
     public static async Task Main(string[] args)
     {
-    var deployment = "gpt-4o-mini";
+    var deployment = "gpt-4o";
     var endpoint = "AZURE_OPENAI_ENDPOINT"; // update to your Azure OpenAI endpoint
     var key = "AZURE_OPENAI_KEY"; // Updated key placeholder
 
