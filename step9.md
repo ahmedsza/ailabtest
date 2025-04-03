@@ -472,6 +472,7 @@ foreach (ThreadMessage threadMessage in messages)
                 Azure.Response<AgentFile> agentfile = await client.GetFileAsync(pathItem.FileId);
                 Azure.Response<System.BinaryData> fileBytes = await client.GetFileContentAsync(pathItem.FileId);
                 var mdfile = System.IO.Path.GetFileName(agentfile.Value.Filename);
+                System.IO.Directory.CreateDirectory("./blog");
                 using System.IO.FileStream stream = System.IO.File.OpenWrite($"./blog/{mdfile}");
                 fileBytes.Value.ToStream().CopyTo(stream);
             }
