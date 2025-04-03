@@ -560,11 +560,8 @@ This class is defined as a nested class inside program class
 ```csharp
 
  #pragma warning disable SKEXP0110   
- using System.Threading;
-    
 
-
-private sealed class ApprovalTerminationStrategy : TerminationStrategy
+internal sealed class ApprovalTerminationStrategy : TerminationStrategy
 {
         // Terminate when the final message contains the term "approve"
         protected override Task<bool> ShouldAgentTerminateAsync(Microsoft.SemanticKernel.Agents.Agent agent, IReadOnlyList<ChatMessageContent> history, CancellationToken cancellationToken)
