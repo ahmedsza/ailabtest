@@ -355,7 +355,7 @@ Let's implement the Save Plugin functionality with the following steps:
 3. **Create Python Assistant Agent**
    ```csharp
    Azure.Response<Azure.AI.Projects.Agent> agentResponse = await client.CreateAgentAsync(
-       model: "gpt-4o-mini",
+       model: "gpt-4o",
        name: "code-agent",
        instructions: "You are a personal python assistant. Write and run code to answer questions.",
        tools: new List<ToolDefinition> { new CodeInterpreterToolDefinition() });
@@ -410,9 +410,10 @@ Let's implement the Save Plugin functionality with the following steps:
                {
                   Azure.Response<AgentFile> agentfile = await client.GetFileAsync(pathItem.FileId);
                 Azure.Response<System.BinaryData> fileBytes = await client.GetFileContentAsync(pathItem.FileId);
+
                 var mdfile = System.IO.Path.GetFileName(agentfile.Value.Filename);
-                System.IO.Directory.CreateDirectory("./blog");
-                using System.IO.FileStream stream = System.IO.File.OpenWrite($"./blog/{mdfile}");
+     
+                using System.IO.FileStream stream = System.IO.File.OpenWrite(mdfile);
                 fileBytes.Value.ToStream().CopyTo(stream);
                }
            }
@@ -437,7 +438,7 @@ public sealed class SavePlugin
 var connectionString = "YOUR_CONNECTION_STRING";
 AgentsClient client = new AgentsClient(connectionString, new DefaultAzureCredential());
 Azure.Response<Azure.AI.Projects.Agent> agentResponse = await client.CreateAgentAsync(
-    model: "gpt-4o-mini",
+    model: "gpt-4o",
     name: "code-agent",
     instructions: "You are a personal python assistant. Write and run code to answer questions.",
     tools: new List<ToolDefinition> { new CodeInterpreterToolDefinition() });
@@ -472,8 +473,9 @@ foreach (ThreadMessage threadMessage in messages)
                 Azure.Response<AgentFile> agentfile = await client.GetFileAsync(pathItem.FileId);
                 Azure.Response<System.BinaryData> fileBytes = await client.GetFileContentAsync(pathItem.FileId);
                 var mdfile = System.IO.Path.GetFileName(agentfile.Value.Filename);
-                System.IO.Directory.CreateDirectory("./blog");
-                using System.IO.FileStream stream = System.IO.File.OpenWrite($"./blog/{mdfile}");
+     
+                using System.IO.FileStream stream = System.IO.File.OpenWrite(mdfile);
+
                 fileBytes.Value.ToStream().CopyTo(stream);
             }
         }
@@ -596,7 +598,7 @@ AgentGroupChat chat =
  #pragma warning disable SKEXP0110
 
 ChatMessageContent input = new(AuthorRole.User, """
-                    I am writing a blog about GraphRAG. Search for the following 2 questions and write a Chinese blog based on the search results ,save it           
+                    I am writing a blog about GraphRAG. Search for the following 2 questions and write an Afrikaans blog based on the search results ,save it           
                         1. What is Microsoft GraphRAG?
                         2. Vector-based RAG vs GraphRAG
                     """);
