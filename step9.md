@@ -24,7 +24,8 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
 
    ```
    dotnet new console -n AzureSKMultiAgent
-   cd AzureSemanticKernelApp
+   cd AzureSKMultiAgent
+   
    ```
 
 
