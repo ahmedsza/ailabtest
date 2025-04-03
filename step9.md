@@ -503,7 +503,7 @@ ChatCompletionAgent search_agent =
                 Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() }),
             };
 ```
-3. # Create the Save Plugin
+3. #### Create the Save Plugin
 ```csharp
 const string SaveHostName = "SaveBlog";
 const string SavehHostInstructions = "Save blog content. Respond with 'Saved' to when your blog are saved.";
