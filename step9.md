@@ -3,10 +3,19 @@
 #### Objective
 Learn how to create and use an AI agent using Azure AI Agent Service with Semantic Kernel and Bing Grounding in a C# console application.
 
-#### Prerequisites
-- Azure account with necessary permissions
+
+## Prerequisites
+- An Azure account
+- Visual Studio or Visual Studio Code
 - .NET SDK installed
-- An IDE or text editor like Visual Studio or Visual Studio Code
+- Azure AI Project created. Will require
+  - connection string
+  - endpoint URL
+  - key
+- Bing Grounding Setup. See [Grounding with Bing Search Setup](step8_grounding.md)
+- Azure OpenAI deployment, such as gpt-4o, in Azure AI Project. Note that gpt-4o-mini is not supported with Bing Grounding. 
+- Appropriate permissions to Azure AI Project
+- Logged into appropriate Azure subscription via Azure CLI
 
 #### Step-by-Step Guide
 
@@ -16,11 +25,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
    dotnet new console -n AzureSKMultiAgent
    cd AzureSemanticKernelApp
    ```
-    Open AzureSemanticKernelApp.csproj, and add this line in PropertyGroup
-    ```xml
-        <NoWarn>$(NoWarn);SKEXP0001,SKEXP0010</NoWarn>
-    ```
-    Save the changes to the project file.
+
 
 2. **Add Necessary NuGet Packages**
    Add the required NuGet packages for Microsoft Semantic Kernel, Azure AI Agent Service, and Azure Identity:
