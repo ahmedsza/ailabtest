@@ -20,7 +20,8 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
 #### Step-by-Step Guide
 
 1. **Create a New C# Console Application**
-   Open your terminal or command prompt and run the following command to create a new C# console application:
+   - Open your terminal or command prompt and run the following command to create a new C# console application:
+
    ```
    dotnet new console -n AzureSKMultiAgent
    cd AzureSemanticKernelApp
@@ -28,7 +29,8 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
 
 
 2. **Add Necessary NuGet Packages**
-   Add the required NuGet packages for Microsoft Semantic Kernel, Azure AI Agent Service, and Azure Identity:
+   
+   - Add the required NuGet packages for Microsoft Semantic Kernel, Azure AI Agent Service, and Azure Identity:
    ```
    dotnet add package Microsoft.SemanticKernel.Agents.Abstractions --version 1.32.0-alpha
    dotnet add package Microsoft.SemanticKernel.Agents.Core --version 1.32.0-alpha
