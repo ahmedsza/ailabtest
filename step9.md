@@ -40,14 +40,16 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
    dotnet add package Microsoft.SemanticKernel.Connectors.AzureOpenAI --version 1.32.0-alpha
    dotnet add package Azure.AI.Projects --version 1.0.0-beta.2
    dotnet add package Azure.Identity --version 1.13.1
-   
+
    ```
 
 3. **Import Namespaces**
    - Open the solution in Visual Studio or Visual Studio Code.
+   - Remove any code in Program.cs
    - Import the necessary namespaces for the Azure SDKs at the top of your `Program.cs` file:
    ```csharp
    using System;
+   using System.ComponentModel;
    using System.Collections.Generic;
    using System.Threading.Tasks;
    using Azure.Core;
@@ -68,12 +70,15 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
     {
          const string HostName = "SeachAssistant";
          const string HostInstructions = "Search information ";
+
+         // Main method and other code will go here
     }
     ```
     - Creates a partial class to implement the main program logic
     - Defines constants for the assistant's name and instructions
 
 5. **Set Up Main Method**
+    - In Program class , add the following code to define the entry point of the application:
     ```csharp
     public static async Task Main(string[] args)
     {
@@ -98,8 +103,8 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
 
 
 7. **Create Custom Headers Policy Class**
-   Not the code below is a seperate class in Program.cs
-   Create a custom headers policy to add the `x-ms-enable-preview` header to requests:
+   - Note the code below is a seperate class in Program.cs. It does not go into the Program class
+   - Create a custom headers policy to add the `x-ms-enable-preview` header to requests:
    ```csharp
    internal class CustomHeadersPolicy : HttpPipelineSynchronousPolicy
    {
@@ -111,8 +116,8 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
    ```
 
 ### Task 8: Define Search Plugin
-
-Let's break down the implementation of the Search Plugin into manageable steps:
+- This is seperate class that you can define at the end of the file. 
+- This class will be responsible for using Bing to perform searches. Let's break down the implementation of the Search Plugin into manageable steps:
 
 1. **Create the Plugin Class Structure**
     ```csharp
@@ -381,6 +386,7 @@ Let's implement the Save Plugin functionality with the following steps:
 7. **Process Results and Save File**
    ```csharp
    Azure.Response<PageableList<ThreadMessage>> afterRunMessagesResponse = await client.GetMessagesAsync(thread.Id);
+   IReadOnlyList<ThreadMessage> messages = afterRunMessagesResponse.Value.Data;
    foreach (ThreadMessage threadMessage in messages)
    {
        foreach (MessageContent contentItem in threadMessage.ContentItems)
@@ -389,15 +395,16 @@ Let's implement the Save Plugin functionality with the following steps:
            {
                if (textItem.Annotations[0] is MessageTextFilePathAnnotation pathItem)
                {
-                   Azure.Response agentfile = await client.GetFileAsync(pathItem.FileId);
-                   Azure.Response fileBytes = await client.GetFileContentAsync(pathItem.FileId);
-                   var mdfile = System.IO.Path.GetFileName(agentfile.Value.Filename);
-                   using System.IO.FileStream stream = System.IO.File.OpenWrite($"./blog/{mdfile}");
-                   fileBytes.Value.ToStream().CopyTo(stream);
+                  Azure.Response<AgentFile> agentfile = await client.GetFileAsync(pathItem.FileId);
+                Azure.Response<System.BinaryData> fileBytes = await client.GetFileContentAsync(pathItem.FileId);
+                var mdfile = System.IO.Path.GetFileName(agentfile.Value.Filename);
+                using System.IO.FileStream stream = System.IO.File.OpenWrite($"./blog/{mdfile}");
+                fileBytes.Value.ToStream().CopyTo(stream);
                }
            }
        }
    }
+      return "Saved";
    ```
    - Retrieves generated file
    - Saves to local blog directory
@@ -408,87 +415,57 @@ Remember to replace "YOUR_CONNECTION_STRING" with your actual Azure AI Agent Ser
 ```csharp
 public sealed class SavePlugin
 {
-        [KernelFunction, Description("Save blog")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:Use properties where appropriate", Justification = "Too smart")]
-        public async Task Save([Description("save blog content")]
-            string content)
+    [KernelFunction, Description("Save blog")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:Use properties where appropriate", Justification = "Too smart")]
+    public async Task<string> Save([Description("save blog content")] string content)
+    {
+        Console.Write("###" + content);
+var connectionString = "YOUR_CONNECTION_STRING";
+AgentsClient client = new AgentsClient(connectionString, new DefaultAzureCredential());
+Azure.Response<Azure.AI.Projects.Agent> agentResponse = await client.CreateAgentAsync(
+    model: "gpt-4o-mini",
+    name: "code-agent",
+    instructions: "You are a personal python assistant. Write and run code to answer questions.",
+    tools: new List<ToolDefinition> { new CodeInterpreterToolDefinition() });
+Azure.AI.Projects.Agent agent = agentResponse.Value;
+Azure.Response<AgentThread> threadResponse = await client.CreateThreadAsync();
+AgentThread thread = threadResponse.Value;
+Azure.Response<ThreadMessage> messageResponse = await client.CreateMessageAsync(
+    thread.Id,
+    MessageRole.User,
+    @"You are my Python programming assistant. Generate code and execute it according to the following requirements
+        1. Save" + content + @"file as blog-{YYMMDDHHMMSS}.md
+        2. give me the download this file link
+    ");
+    Azure.Response<ThreadRun> runResponse = await client.CreateRunAsync(thread.Id, agent.Id);
+do
+{
+    await Task.Delay(TimeSpan.FromMilliseconds(500));
+    runResponse = await client.GetRunAsync(thread.Id, runResponse.Value.Id);
+}
+while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == RunStatus.InProgress);
+Azure.Response<PageableList<ThreadMessage>> afterRunMessagesResponse = await client.GetMessagesAsync(thread.Id);
+IReadOnlyList<ThreadMessage> messages = afterRunMessagesResponse.Value.Data;
+
+foreach (ThreadMessage threadMessage in messages)
+{
+    foreach (MessageContent contentItem in threadMessage.ContentItems)
+    {
+        if (contentItem is MessageTextContent textItem && textItem.Annotations?.Count > 0)
         {
-            Console.Write("###"+content);
-            var connectionString = "eastus.api.azureml.ms;6415ebd4-1dd7-430f-bd4d-2f5e9419c1cd;rg-kinfey-ai;kinfey-agent-project-23ra";
-            AgentsClient client = new AgentsClient(connectionString, new DefaultAzureCredential());
-            Azure.Response agentResponse = await client.CreateAgentAsync(
-                model: "gpt-4o-mini",
-                name: "code-agent",
-                instructions: "You are a personal python assistant. Write and run code to answer questions.",
-                tools: new List { new CodeInterpreterToolDefinition() });
-            Azure.AI.Projects.Agent agent = agentResponse.Value;
-            Azure.Response> agentListResponse = await client.GetAgentsAsync();
-            Azure.Response threadResponse = await client.CreateThreadAsync();
-            AgentThread thread = threadResponse.Value;
-             Azure.Response messageResponse = await client.CreateMessageAsync(
-            thread.Id,
-            MessageRole.User,
-            @"You are my Python programming assistant. Generate code and execute it according to the following requirements
-                1. Save" + content +     @"file as blog-{YYMMDDHHMMSS}.md
-                2. give me the download this file link
-            ");
-            ThreadMessage message = messageResponse.Value;
-            Azure.Response> messagesListResponse = await client.GetMessagesAsync(thread.Id);
-            Azure.Response runResponse = await client.CreateRunAsync(
-            thread.Id,
-            agent.Id);
-            ThreadRun run = runResponse.Value;
-            do
+            if (textItem.Annotations[0] is MessageTextFilePathAnnotation pathItem)
             {
-                        await Task.Delay(TimeSpan.FromMilliseconds(500));
-                        runResponse = await client.GetRunAsync(thread.Id, runResponse.Value.Id);
+                Azure.Response<AgentFile> agentfile = await client.GetFileAsync(pathItem.FileId);
+                Azure.Response<System.BinaryData> fileBytes = await client.GetFileContentAsync(pathItem.FileId);
+                var mdfile = System.IO.Path.GetFileName(agentfile.Value.Filename);
+                using System.IO.FileStream stream = System.IO.File.OpenWrite($"./blog/{mdfile}");
+                fileBytes.Value.ToStream().CopyTo(stream);
             }
-            while (runResponse.Value.Status == RunStatus.Queued
-                        || runResponse.Value.Status == RunStatus.InProgress);
-            Azure.Response> afterRunMessagesResponse = await client.GetMessagesAsync(thread.Id);
-            IReadOnlyList messages = afterRunMessagesResponse.Value.Data;
-
-            foreach (ThreadMessage threadMessage in messages)
-            {
-                        // Console.Write($"{threadMessage.CreatedAt:yyyy-MM-dd HH:mm:ss} - {threadMessage.Role,10}: ");
-                        foreach (MessageContent contentItem in threadMessage.ContentItems)
-                        {
-                            
-                            if (contentItem is MessageTextContent textItem)
-                            {
-                                // Console.Write(textItem.Text);
-
-                                if(textItem.Annotations is not null && textItem.Annotations.Count > 0)
-                                {
-
-                                    if(textItem.Annotations[0] is MessageTextFilePathAnnotation pathItem )
-                                    {
-                                        // Console.Write($"[Download file]({pathItem.Text})");
-
-                                        Azure.Response agentfile = await client.GetFileAsync(pathItem.FileId);
-
-                                        Azure.Response fileBytes = await client.GetFileContentAsync(pathItem.FileId);
-
-                                        Console.Write(agentfile.Value.Filename);
-
-                                        var mdfile =System.IO.Path.GetFileName(agentfile.Value.Filename);
-
-                                        using System.IO.FileStream stream = System.IO.File.OpenWrite($"./blog/{mdfile}");
-                                        fileBytes.Value.ToStream().CopyTo(stream);
-
-                                    }
-
-                                }
-
-                            }
-                            // Console.WriteLine();
-                        }
-
-
-            }
-        
-            return "Saved";
         }
+    }
+}
+    return "Saved";
+    }
 }
 ```
 
@@ -546,20 +523,25 @@ ChatCompletionAgent write_blog_agent =
                 Kernel = kernel
             };
    ```
-5. #### Add the Plugins to the Kernel          
+5. #### Add the Plugins to the Kernel  
+  
+```csharp   
+
 #pragma warning disable SKEXP0110
 
-KernelPlugin search_plugin = KernelPluginFactory.CreateFromType();
+KernelPlugin search_plugin = KernelPluginFactory.CreateFromType<SearchPlugin>();
 search_agent.Kernel.Plugins.Add(search_plugin);
 
 #pragma warning disable SKEXP0110
 
-KernelPlugin save_blog_plugin = KernelPluginFactory.CreateFromType();
+KernelPlugin save_blog_plugin = KernelPluginFactory.CreateFromType<SavePlugin>();
 save_blog_agent.Kernel.Plugins.Add(save_blog_plugin);
+
 ```
 
+
 6. #### Define a termination strategy
-This is a seperate class in Program.cs 
+This class is defined as a nested class inside program class
 ```csharp
 
  #pragma warning disable SKEXP0110   
@@ -570,7 +552,7 @@ This is a seperate class in Program.cs
 private sealed class ApprovalTerminationStrategy : TerminationStrategy
 {
         // Terminate when the final message contains the term "approve"
-        protected override Task ShouldAgentTerminateAsync(Microsoft.SemanticKernel.Agents.Agent agent, IReadOnlyList history, CancellationToken cancellationToken)
+        protected override Task<bool> ShouldAgentTerminateAsync(Microsoft.SemanticKernel.Agents.Agent agent, IReadOnlyList<ChatMessageContent> history, CancellationToken cancellationToken)
             => Task.FromResult(history[history.Count - 1].Content?.Contains("Saved", StringComparison.OrdinalIgnoreCase) ?? false);
 }
 ```
