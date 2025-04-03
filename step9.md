@@ -16,6 +16,11 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
    dotnet new console -n AzureSemanticKernelApp
    cd AzureSemanticKernelApp
    ```
+    Open AzureSemanticKernelApp.csproj, and add this line in PropertyGroup
+    ```xml
+        <NoWarn>$(NoWarn);SKEXP0001,SKEXP0010</NoWarn>
+    ```
+    Save the changes to the project file.
 
 2. **Add Necessary NuGet Packages**
    Add the required NuGet packages for Microsoft Semantic Kernel, Azure AI Agent Service, and Azure Identity:
@@ -29,6 +34,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
    ```
 
 3. **Import Namespaces**
+   Open the solution in Visual Studio or Visual Studio Code.
    Import the necessary namespaces for the Azure SDKs at the top of your `Program.cs` file:
    ```csharp
    using System;
@@ -43,6 +49,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
    using Microsoft.SemanticKernel.Agents.Chat;
    using Microsoft.SemanticKernel.ChatCompletion;
    using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
+   using Agent = Azure.AI.Projects.Agent;
    ```
 
 4. **Define Connection Strings and Keys**
@@ -140,7 +147,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
     {
         await Task.Delay(TimeSpan.FromMilliseconds(500));
         runResponse = await agentClient.GetRunAsync(thread.Id, runResponse.Value.Id);
-    } while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == InProgress);
+    } while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == RunStatus.InProgress);
     ```
 
 14. **Retrieve and Display Messages**
