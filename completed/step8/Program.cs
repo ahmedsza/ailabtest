@@ -49,7 +49,7 @@ public sealed class SearchPlugin
         Azure.Response<ThreadMessage> messageResponse = await agentClient.CreateMessageAsync(
              thread.Id,
              MessageRole.User,
-             "How does wikipedia explain Euler's Identity?");
+             "what is the current Microsoft stock price?");
 
         Azure.Response<ThreadRun> runResponse = await agentClient.CreateRunAsync(thread, agent);
         // Poll until completion
@@ -120,7 +120,7 @@ public partial class Program
         agent.Kernel.Plugins.Add(plugin);
 
         ChatHistory chat = new ChatHistory();
-        var input = "PUT SOME INPUT HERE";
+        var input = "Introduce Microsoft";
         chat.Add(new ChatMessageContent(AuthorRole.User, input));
 
         var agentContent = agent.InvokeAsync(chat);

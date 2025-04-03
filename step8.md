@@ -151,7 +151,7 @@ Let's break down the implementation of the Search Plugin into manageable steps:
     Azure.Response<ThreadMessage> messageResponse = await agentClient.CreateMessageAsync(
          thread.Id,
          MessageRole.User,
-         "How does wikipedia explain Euler's Identity?");
+         "what is the current Microsoft stock price?");
     ```
     - Creates a new thread for conversation
     - Adds initial message to the thread
@@ -242,7 +242,7 @@ public sealed class SearchPlugin
         Azure.Response<ThreadMessage> messageResponse = await agentClient.CreateMessageAsync(
             thread.Id,
             MessageRole.User,
-            "How does wikipedia explain Euler's Identity?");
+            "what is the current Microsoft stock price?");
         ThreadMessage message = messageResponse.Value;
 
         Azure.Response<ThreadRun> runResponse = await agentClient.CreateRunAsync(thread, agent);
@@ -346,7 +346,7 @@ Let's break down the implementation of the chat completion agent into steps:
 6. **Initialize Chat and Process Input**
     ```csharp
     ChatHistory chat = new ChatHistory();
-    var input = "Introduce South China Normal University";
+    var input = "Introduce Microsoft";
     chat.Add(new ChatMessageContent(AuthorRole.User, input));
     ```
     - Creates a new chat history
@@ -397,7 +397,7 @@ public partial class Program
 
     ChatHistory chat = new ChatHistory();
 
-    var input = "Introduce South China Normal University";
+    var input = "Introduce Microsoft";
 
     chat.Add(new ChatMessageContent(AuthorRole.User, input));
     Console.WriteLine($"# {AuthorRole.User}: '{input}'");
