@@ -194,7 +194,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
     Azure.Response<ThreadMessage> messageResponse = await agentClient.CreateMessageAsync(
          thread.Id,
          MessageRole.User,
-         "what is the current Microsoft stock price?");
+        searchItem);
     ```
     - Creates a new thread for conversation
     - Adds initial message to the thread
@@ -285,7 +285,7 @@ public sealed class SearchPlugin
         Azure.Response<ThreadMessage> messageResponse = await agentClient.CreateMessageAsync(
             thread.Id,
             MessageRole.User,
-            "what is the current Microsoft stock price?");
+            searchItem);
         ThreadMessage message = messageResponse.Value;
 
         Azure.Response<ThreadRun> runResponse = await agentClient.CreateRunAsync(thread, agent);
