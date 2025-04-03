@@ -40,6 +40,7 @@ Install the required packages by running the following commands:
    dotnet add package Microsoft.SemanticKernel.Connectors.AzureOpenAI --version 1.32.0-alpha
    dotnet add package Azure.AI.Projects --version 1.0.0-beta.2
    dotnet add package Azure.Identity --version 1.13.1
+   
    ```
 
 
