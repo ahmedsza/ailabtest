@@ -25,9 +25,10 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
    ```
    dotnet new console -n AzureSKMultiAgent
    cd AzureSKMultiAgent
-   
-   ```
 
+   ```
+   - In Visual Studio, open the AzureSKMultiAgent.csproj .
+   - In Visual Studio Code, open the folder `AzureSKMultiAgent`. You can use the command `code .` to open the project in VS Code.
 
 2. **Add Necessary NuGet Packages**
    
@@ -39,6 +40,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
    dotnet add package Microsoft.SemanticKernel.Connectors.AzureOpenAI --version 1.32.0-alpha
    dotnet add package Azure.AI.Projects --version 1.0.0-beta.2
    dotnet add package Azure.Identity --version 1.13.1
+   
    ```
 
 3. **Import Namespaces**
