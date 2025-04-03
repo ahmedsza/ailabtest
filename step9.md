@@ -73,6 +73,19 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
 
          // Main method and other code will go here
     }
+
+    // ApprovalTerminationStrategy class will go here
+
+    // Custom headers policy class will go here
+
+    // Search plugin class will go here
+
+    // Save plugin class will go here
+
+
+
+
+
     ```
     - Creates a partial class to implement the main program logic
     - Defines constants for the assistant's name and instructions
