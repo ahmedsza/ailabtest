@@ -281,16 +281,8 @@ public sealed class SearchPlugin
 }
 ```
 
-### Task 3.4: Define Host Name and Instructions
-Add the following constants in Program.cs:
-Explanation: These constants define the host name and instructions for the chat assistant.
 
-```csharp
-const string HostName = "SeachAssistant";
-const string HostInstructions = "Search information ";
-```
-
-### Task 3.5: Create Chat Completion Agent
+### Task 3.4: Create Chat Completion Agent
 Let's break down the implementation of the chat completion agent into steps:
 
 1. **Define Program Class Structure**
