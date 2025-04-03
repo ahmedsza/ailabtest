@@ -434,12 +434,25 @@ Verify the output.
 
 The application will output the results from the Azure AI Agent Service, displaying the search results for the query "Introduce South China Normal University".
 
+
 ## Troubleshooting
 
-All appropriate keys, endpoints, and connection strings must be correctly configured to interact with Azure services.
-Ensure the Azure AI Project is properly set up with the required connections and models.
-Make sure Bing Grounding is setup
-Check that you logged into Azure
-Check permissions 
-Check for any network connectivity issues that may prevent communication with Azure services.
-Review the Azure AI Agent Service documentation for any specific troubleshooting steps related to chat completion agents.
+### Configuration Issues
+- Verify all keys, endpoints, and connection strings are correctly configured
+- Ensure Azure AI Project is properly set up with required connections and models
+- Confirm Bing Grounding is configured correctly
+
+### Authentication and Permissions
+- Verify Azure CLI login status
+- Check user permissions for all required services
+- Review access control settings in Azure portal
+
+### Connectivity
+- Test network connectivity to Azure services
+- Check for any firewall restrictions
+- Verify VPN settings if applicable
+
+### Documentation
+- Review Azure AI Agent Service documentation for specific troubleshooting steps
+- Check Microsoft Learn for updated guidance
+- Monitor Azure Service Health for any ongoing issues
