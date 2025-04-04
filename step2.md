@@ -169,3 +169,10 @@ Learn how to create and configure a file search agent using Azure AI Agent Servi
    ```
 
 By following these steps, you will create a file search agent that can search within uploaded files, leveraging Azure AI Agent Service.
+
+12. **Run and Validate**
+   In VS Code with the terminal activated, run the Python script:
+   ```bash
+   python step2.py
+   ```
+   Alternatively with the python file open, click the run button at the top right

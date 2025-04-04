@@ -18,8 +18,8 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 
 	Create a new directory for this lab:
 	```bash
-	mkdir ailab
-	cd ailab
+	mkdir ailab1
+	cd ailab1
 	```
 	Open the folder in Visual Studio Code
 
@@ -55,7 +55,7 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 	```
 
 3. **Import Necessary Libraries**
-	Create a file eg  `code_interpreter_agent.py` 
+	Create a file eg  `lab1.py` 
 	Import the necessary libraries for Azure AI Agent Service, and load the environment variables:
 	```python
 	from azure.ai.projects import AIProjectClient
@@ -161,6 +161,11 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 
 10. **View the File**
 
+	In VS Code with the terminal activated, run the Python script:
+	```bash
+	python lab1.py
+	```
+	Alternatively with the python file open, click the run button at the top right
 	Once complete, you can find the file in the `blog` subdirectory of your project directory. The file will be named `blog-{YYMMDDHHMMSS}.md`, where `{YYMMDDHHMMSS}` is the timestamp when the file was created.
 
 By following these steps, you will create a code interpreter agent that generates and executes Python code to save output to a file, leveraging Azure AI Agent Service.
