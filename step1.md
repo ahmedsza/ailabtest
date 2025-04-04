@@ -155,7 +155,7 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
     After processing, delete the thread and agent to clean up resources:
     ```python
         # Clean up resources
-        project_client.agents.delete_thread(thread.id)
+    	project_client.agents.delete_thread(thread.id)
         project_client.agents.delete_agent(agent.id)
     ```
 
