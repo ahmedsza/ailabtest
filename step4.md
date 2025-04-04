@@ -11,15 +11,37 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
 
 #### Step-by-Step Guide:
 
-1. **Install Required Packages**
+1. **Setup, Create folder, setup virtual environment, install packages**
+    - Open your project folder
+
+	Create a new directory for this lab:
+	```bash
+	mkdir ailab4
+	cd ailab4
+	```
+	Open the folder in Visual Studio Code
+
+	Open a terminal in VS Code, create and activate a Python virtual environment:
+
+	Windows:
+	```cmd
+	python -m venv .venv
+	.venv\Scripts\activate
+	```
+
+	Linux/macOS:
+	```bash
+	python3 -m venv .venv
+	source .venv/bin/activate
+	```
 
 	Ensure you have the required packages installed. You will need the following packages:
 	```python
-	azure-ai-projects
-	azure-identity
-	dotenv
-	autogen-agentchat
-	autogen-ext[openai]
+	pip install azure-ai-projects
+	pip install azure-identity
+	pip install dotenv
+	pip install autogen-agentchat
+	pip install autogen-ext[openai]
 	```
 
 2. **Set Up Environment Variables**
@@ -92,7 +114,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
             )
 
             # Process the message with the agent, synchronously
-            run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
             print(f"Run finished with status: {run.status}")
 
             # Check the status of the run
@@ -317,5 +339,11 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
     if __name__ == "__main__":
         asyncio.run(team_run())
     ```
+15. **Run and Validate**
+   In VS Code with the terminal activated, run the Python script:
+   ```bash
+   python step4.py
+   ```
+   Alternatively with the python file open, click the run button at the top right
 
 By following these steps, you will create and orchestrate multiple AI agents to complete a blog writing task, leveraging AutoGen and Azure AI Agent Service.
