@@ -32,12 +32,12 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
 
 3. **Add Application Settings**
 
-    Create a new file named `appsettings.json` in the root of your project and add the following content:
+    Create a new file named `appsettings.json` in the root of your project and add the following content, Replace the BINGCONNECTIONNAME with your Bing Connection Name:
     ```json
     {
         "AzureAI": {
             "ModelName": "gpt-4o",
-            "BingConnectionName": "armadabing0001"
+            "BingConnectionName": "Your Bing Connection Name"
         }
     }
     ```
@@ -62,7 +62,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     dotnet add package Azure.Identity
     dotnet add package Microsoft.Extensions.Configuration
     dotnet add package Microsoft.Extensions.Configuration.UserSecrets
-    
+
     ```
 
 5. **Import Namespaces**
