@@ -58,7 +58,7 @@ To get started with building AI agents and applications, you will need to set up
 8. **Setup Bing Grounding**
     - Create a Bing Grounding resource in Azure AI Project
     - Create a Bing Grounding tool connection
-    - Refer to [Bing Grounding](../step8_grounding.md) for more information
+    - Refer to [Bing Grounding](../bing_grounding.md) for more information
 - 
 ## Software Requirements
 
