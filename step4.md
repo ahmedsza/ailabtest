@@ -37,6 +37,9 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
 	source .venv/bin/activate
 
 	```
+    In the ailab4 folder, create a folder called blog. We will store the blog files and related content for our AI agents in this directory. 
+
+   
 
 	Ensure you have the required packages installed. You will need the following packages:
 	```python
@@ -48,7 +51,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
 
 	```
 
-2. **Set Up Environment Variables**
+1. **Set Up Environment Variables**
 
 	Create a `.env` file in your project directory and add your Azure AI Project connection string, deployment model name, and other necessary configurations:
 	```plaintext
@@ -59,7 +62,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
 	BING_CONNECTION_NAME=""
 	```
 
-3. **Create an Azure AI Agent using Bing Grounding Tool**
+2. **Create an Azure AI Agent using Bing Grounding Tool**
 
     In this step, we will create an Azure AI Agent that usese the Bing Grounding Tool, following the same pattern as used in the previous labs. To do this, create a new file called `web_ai_agent.py` and copy the following code into it:
     ```python
@@ -140,7 +143,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
         return returnMessage
     ```
 
-4. **Create an Azure AI Agent using Code Interpreter Tool**
+3. **Create an Azure AI Agent using Code Interpreter Tool**
 
     In this step, we will create an Azure AI Agent that usese the Code Interpreter Tool, following the same pattern as used in the previous labs. To do this, create a new file called `save_blog_agent.py` and copy the following code into it:
     ```python
@@ -219,7 +222,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
             return "Saved"
     ```
 
-5. **Create the AutoGen Agent**
+4. **Create the AutoGen Agent**
 
     In a new file, named step4.py, import the necessary libraries for the AutoGen Agent and Azure AI Agent Service:
     ```python
