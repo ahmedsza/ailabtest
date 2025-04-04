@@ -11,15 +11,42 @@ Learn how to create and configure a web search agent using AutoGen and Azure AI 
 
 #### Step-by-Step Guide:
 
-1. **Install Required Packages**
+1. **Setup, Create folder, setup virtual environment, install packages**
 
-	Ensure you have the required packages installed. You will need the following packages:
+
+	- Open your project folder
+
+	Create a new directory for this lab:
+	```bash
+	mkdir ailab3
+	cd ailab3
+	```
+	Open the folder in Visual Studio Code
+
+	Open a terminal in VS Code, create and activate a Python virtual environment:
+
+	Windows:
+	```cmd
+	python -m venv .venv
+	.venv\Scripts\activate
+	```
+
+	Linux/macOS:
+	```bash
+	python3 -m venv .venv
+	source .venv/bin/activate
+	```
+
+
+	Ensure you have the required packages installed. You will need the following packages. You can run this from the terminal:
+
 	```python
-	azure-ai-projects
-	azure-identity
-	dotenv
-	autogen-agentchat
-	autogen-ext[openai]
+	pip install azure-ai-projects
+	pip install azure-identity
+	pip install dotenv
+	pip install autogen-agentchat
+	pip install autogen-ext[openai]
+
 	```
 
 2. **Set Up Environment Variables**
@@ -186,7 +213,7 @@ Learn how to create and configure a web search agent using AutoGen and Azure AI 
         print(response.chat_message.content)
     ```
 
-9. **Execute the Assistant Run**
+10. **Execute the Assistant Run**
 
     Execute the assistant run to perform the web search:
     ```python
@@ -194,5 +221,12 @@ Learn how to create and configure a web search agent using AutoGen and Azure AI 
     if __name__ == "__main__":
         asyncio.run(assistant_run())
     ```
+
+11. **Run and Validate**
+   In VS Code with the terminal activated, run the Python script:
+   ```bash
+   python step3.py
+   ```
+   Alternatively with the python file open, click the run button at the top right
 
 By following these steps, you will create a web search agent that uses AutoGen and Azure AI Agent Service to perform web searches.
