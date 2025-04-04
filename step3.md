@@ -8,7 +8,10 @@ Learn how to create and configure a web search agent using AutoGen and Azure AI 
 - Python environment with required packages installed
 - Azure AI Project connection string
 - Deployed chat completion model, such as gpt-4o, in Azure AI Project
-
+- Bing Grounding resource created
+- Bing Grounding tool connection in Azure AI Project
+  - Refer to [Bing Grounding](step8_grounding.md) for more information
+  
 #### Step-by-Step Guide:
 
 1. **Setup, Create folder, setup virtual environment, install packages**
@@ -29,12 +32,14 @@ Learn how to create and configure a web search agent using AutoGen and Azure AI 
 	```cmd
 	python -m venv .venv
 	.venv\Scripts\activate
+
 	```
 
 	Linux/macOS:
 	```bash
 	python3 -m venv .venv
 	source .venv/bin/activate
+
 	```
 
 
@@ -58,6 +63,7 @@ Learn how to create and configure a web search agent using AutoGen and Azure AI 
 	MODEL_NAME=""
 	AZURE_OPENAI_ENDPOINT=""
 	BING_CONNECTION_NAME=""
+
 	```
 
 3. **Create an Azure AI Agent using Bing Grounding Tool**
