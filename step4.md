@@ -18,6 +18,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
 	```bash
 	mkdir ailab4
 	cd ailab4
+
 	```
 	Open the folder in Visual Studio Code
 
@@ -27,12 +28,14 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
 	```cmd
 	python -m venv .venv
 	.venv\Scripts\activate
+
 	```
 
 	Linux/macOS:
 	```bash
 	python3 -m venv .venv
 	source .venv/bin/activate
+
 	```
 
 	Ensure you have the required packages installed. You will need the following packages:
@@ -42,6 +45,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
 	pip install dotenv
 	pip install autogen-agentchat
 	pip install autogen-ext[openai]
+    
 	```
 
 2. **Set Up Environment Variables**
