@@ -12,7 +12,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
   - connection string
   - endpoint URL
   - key
-- Bing Grounding Setup. See [Grounding with Bing Search Setup](step8_grounding.md)
+- Bing Grounding Setup. See [Grounding with Bing Search Setup](lab08_grounding.md)
 - Azure OpenAI deployment, such as gpt-4o, in Azure AI Project. Note that gpt-4o-mini is not supported with Bing Grounding. 
 - Appropriate permissions to Azure AI Project
 - Logged into appropriate Azure subscription via Azure CLI
@@ -208,7 +208,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Semant
          await Task.Delay(TimeSpan.FromMilliseconds(500));
          runResponse = await agentClient.GetRunAsync(thread.Id, runResponse.Value.Id);
     }
-    while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == RunStatus.InProgress);
+    while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == InProgress);
     ```
     - Initiates the search operation
     - Monitors progress until completion
@@ -295,7 +295,7 @@ public sealed class SearchPlugin
             await Task.Delay(TimeSpan.FromMilliseconds(500));
             runResponse = await agentClient.GetRunAsync(thread.Id, runResponse.Value.Id);
         }
-        while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == RunStatus.InProgress);
+        while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == InProgress);
 
         Azure.Response<PageableList<ThreadMessage>> afterRunMessagesResponse = await agentClient.GetMessagesAsync(thread.Id);
         IReadOnlyList<ThreadMessage> messages = afterRunMessagesResponse.Value.Data;
@@ -391,7 +391,7 @@ Let's implement the Save Plugin functionality with the following steps:
        await Task.Delay(TimeSpan.FromMilliseconds(500));
        runResponse = await client.GetRunAsync(thread.Id, runResponse.Value.Id);
    }
-   while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == RunStatus.InProgress);
+   while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == InProgress);
    ```
    - Initiates the run
    - Monitors until completion
@@ -458,7 +458,7 @@ do
     await Task.Delay(TimeSpan.FromMilliseconds(500));
     runResponse = await client.GetRunAsync(thread.Id, runResponse.Value.Id);
 }
-while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == RunStatus.InProgress);
+while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == InProgress);
 Azure.Response<PageableList<ThreadMessage>> afterRunMessagesResponse = await client.GetMessagesAsync(thread.Id);
 IReadOnlyList<ThreadMessage> messages = afterRunMessagesResponse.Value.Data;
 

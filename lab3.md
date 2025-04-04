@@ -10,7 +10,7 @@ Learn how to create and configure a web search agent using AutoGen and Azure AI 
 - Deployed chat completion model, such as gpt-4o, in Azure AI Project
 - Bing Grounding resource created
 - Bing Grounding tool connection in Azure AI Project
-  - Refer to [Bing Grounding](step8_grounding.md) for more information
+  - Refer to [Bing Grounding](bing_grounding.md) for more information
 - **IMPORTANT** - you might need to assign role Cognitive Services OpenAI User to the user for Azure AI Service associated with the Azure AI Project. This will be in Azure Portal under the Azure AI Service resource IAM settings.
   
 #### Step-by-Step Guide:
