@@ -11,18 +11,47 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
 
 #### Step-by-Step Guide:
 
-1. **Install Required Packages**
+1. **Setup, Create folder, setup virtual environment, install packages**
+    - Open your project folder
+
+	Create a new directory for this lab:
+	```bash
+	mkdir ailab4
+	cd ailab4
+
+	```
+	Open the folder in Visual Studio Code
+
+	Open a terminal in VS Code, create and activate a Python virtual environment:
+
+	Windows:
+	```cmd
+	python -m venv .venv
+	.venv\Scripts\activate
+
+	```
+
+	Linux/macOS:
+	```bash
+	python3 -m venv .venv
+	source .venv/bin/activate
+
+	```
+    In the ailab4 folder, create a folder called blog. We will store the blog files and related content for our AI agents in this directory. 
+
+   
 
 	Ensure you have the required packages installed. You will need the following packages:
 	```python
-	azure-ai-projects
-	azure-identity
-	dotenv
-	autogen-agentchat
-	autogen-ext[openai]
+	pip install azure-ai-projects
+	pip install azure-identity
+	pip install dotenv
+	pip install autogen-agentchat
+	pip install autogen-ext[openai]
+
 	```
 
-2. **Set Up Environment Variables**
+1. **Set Up Environment Variables**
 
 	Create a `.env` file in your project directory and add your Azure AI Project connection string, deployment model name, and other necessary configurations:
 	```plaintext
@@ -33,7 +62,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
 	BING_CONNECTION_NAME=""
 	```
 
-3. **Create an Azure AI Agent using Bing Grounding Tool**
+2. **Create an Azure AI Agent using Bing Grounding Tool**
 
     In this step, we will create an Azure AI Agent that usese the Bing Grounding Tool, following the same pattern as used in the previous labs. To do this, create a new file called `web_ai_agent.py` and copy the following code into it:
     ```python
@@ -92,7 +121,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
             )
 
             # Process the message with the agent, synchronously
-            run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
             print(f"Run finished with status: {run.status}")
 
             # Check the status of the run
@@ -114,9 +143,9 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
         return returnMessage
     ```
 
-4. **Create an Azure AI Agent using Code Interpreter Tool**
+3. **Create an Azure AI Agent using Code Interpreter Tool**
 
-    In this step, we will create an Azure AI Agent that usese the Code Interpreter Tool, following the same pattern as used in the previous labs. To do this, create a new file called `web_ai_agent.py` and copy the following code into it:
+    In this step, we will create an Azure AI Agent that usese the Code Interpreter Tool, following the same pattern as used in the previous labs. To do this, create a new file called `save_blog_agent.py` and copy the following code into it:
     ```python
     from azure.ai.projects import AIProjectClient
     from azure.ai.projects.models import CodeInterpreterTool
@@ -166,7 +195,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
             )
 
             # Process the message with the agent, synchronously
-            run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
             print(f"Run finished with status: {run.status}")
 
             # Check the status of the run
@@ -193,7 +222,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
             return "Saved"
     ```
 
-5. **Create the AutoGen Agent**
+4. **Create the AutoGen Agent**
 
     In a new file, named step4.py, import the necessary libraries for the AutoGen Agent and Azure AI Agent Service:
     ```python
@@ -317,5 +346,11 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
     if __name__ == "__main__":
         asyncio.run(team_run())
     ```
+15. **Run and Validate**
+   In VS Code with the terminal activated, run the Python script:
+   ```bash
+   python step4.py
+   ```
+   Alternatively with the python file open, click the run button at the top right
 
 By following these steps, you will create and orchestrate multiple AI agents to complete a blog writing task, leveraging AutoGen and Azure AI Agent Service.

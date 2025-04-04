@@ -11,15 +11,41 @@ Learn how to create and configure a file search agent using Azure AI Agent Servi
 
 #### Step-by-Step Guide:
 
-1. **Install Required Packages**
+1. **Setup, Create folder, setup virtual environment, install packages**
 
-	Ensure you have the required packages installed. You will need the following packages:
-	```python
-	azure-ai-projects
-	azure-identity
-	dotenv
-   azure-ai-ml
+
+	- Open your project folder
+
+	Create a new directory for this lab:
+	```bash
+	mkdir ailab2
+	cd ailab2
 	```
+	Open the folder in Visual Studio Code
+
+	Open a terminal in VS Code, create and activate a Python virtual environment:
+
+	Windows:
+	```cmd
+	python -m venv .venv
+	.venv\Scripts\activate
+	```
+
+	Linux/macOS:
+	```bash
+	python3 -m venv .venv
+	source .venv/bin/activate
+	```
+
+
+	Ensure you have the required packages installed. You will need the following packages. You can run this from the terminal:
+
+	```python
+	pip install azure-ai-projects
+	pip install azure-identity
+	pip install dotenv
+	```
+
 
 2. **Set Up Environment Variables**
 
@@ -30,14 +56,17 @@ Learn how to create and configure a file search agent using Azure AI Agent Servi
 	```
 
 3. **Import Necessary Libraries**
+   Create a file eg step2.py
+   Create a folder called data. Copy the file intro_rag.md which can be found in the repo into the data folder.
 
 	Import the necessary libraries for Azure AI Agent Service, and load the environment variables:
 	```python
-	from azure.ai.projects import AIProjectClient
-	from azure.ai.projects.models import CodeInterpreterTool
-	from azure.identity import DefaultAzureCredential
-	from dotenv import load_dotenv
-	import os
+   from azure.ai.projects import AIProjectClient
+   from azure.ai.projects.models import FileSearchTool, VectorStoreDataSource, VectorStoreDataSourceAssetType
+   from azure.identity import DefaultAzureCredential
+   from dotenv import load_dotenv
+   import os
+   ```
 	
 	# Load environment variables from .env file
 	load_dotenv()
@@ -108,7 +137,7 @@ Learn how to create and configure a file search agent using Azure AI Agent Servi
 	Create and execute the run to process the message:
 	```python
       # Process the message with the agent, synchronously
-      run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+      run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
       print(f"Run finished with status: {run.status}")
 	```
 
@@ -140,3 +169,10 @@ Learn how to create and configure a file search agent using Azure AI Agent Servi
    ```
 
 By following these steps, you will create a file search agent that can search within uploaded files, leveraging Azure AI Agent Service.
+
+12. **Run and Validate**
+   In VS Code with the terminal activated, run the Python script:
+   ```bash
+   python step2.py
+   ```
+   Alternatively with the python file open, click the run button at the top right

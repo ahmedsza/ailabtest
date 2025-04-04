@@ -9,6 +9,9 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
 - An IDE or text editor like Visual Studio or Visual Studio Code
 - Azure AI Project connection string
 - Deployed chat completion model, such as gpt-4o, in Azure AI Project
+- Bing Grounding resource created
+- Bing Grounding tool connection in Azure AI Project
+  - Refer to [Bing Grounding](step8_grounding.md) for more information
 
 #### Step-by-Step Guide
 
@@ -18,6 +21,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     ```
     dotnet new console -n AzureAIAgent7
     cd AzureAIAgent7
+
     ```
 
 2. **Create Necessary User Secrets**
@@ -26,16 +30,17 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     ```
     dotnet user-secrets init
     dotnet user-secrets set "AzureAI:ProjectConnectionString" "Your Azure AI Project Connection String"
+
     ```
 
 3. **Add Application Settings**
 
-    Create a new file named `appsettings.json` in the root of your project and add the following content:
+    Create a new file named `appsettings.json` in the root of your project and add the following content, Replace the BINGCONNECTIONNAME with your Bing Connection Name:
     ```json
     {
         "AzureAI": {
             "ModelName": "gpt-4o",
-            "BingConnectionName": "armadabing0001"
+            "BingConnectionName": "Your Bing Connection Name"
         }
     }
     ```
@@ -60,6 +65,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     dotnet add package Azure.Identity
     dotnet add package Microsoft.Extensions.Configuration
     dotnet add package Microsoft.Extensions.Configuration.UserSecrets
+
     ```
 
 5. **Import Namespaces**

@@ -11,13 +11,39 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 
 #### Step-by-Step Guide:
 
-1. **Install Required Packages**
+1. **Setup, Create folder, setup virtual environment, install packages**
 
-	Ensure you have the required packages installed. You will need the following packages:
+
+	- Open your project folder
+
+	Create a new directory for this lab:
+	```bash
+	mkdir ailab1
+	cd ailab1
+	```
+	Open the folder in Visual Studio Code
+
+	Open a terminal in VS Code, create and activate a Python virtual environment:
+
+	Windows:
+	```cmd
+	python -m venv .venv
+	.venv\Scripts\activate
+	```
+
+	Linux/macOS:
+	```bash
+	python3 -m venv .venv
+	source .venv/bin/activate
+	```
+
+
+	Ensure you have the required packages installed. You will need the following packages. You can run this from the terminal:
+
 	```python
-	azure-ai-projects
-	azure-identity
-	dotenv
+	pip install azure-ai-projects
+	pip install azure-identity
+	pip install dotenv
 	```
 
 2. **Set Up Environment Variables**
@@ -29,7 +55,7 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 	```
 
 3. **Import Necessary Libraries**
-
+	Create a file eg  `lab1.py` 
 	Import the necessary libraries for Azure AI Agent Service, and load the environment variables:
 	```python
 	from azure.ai.projects import AIProjectClient
@@ -44,6 +70,9 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 
 4. **Initialize the Project Client**
 
+	
+	
+	```python
 	Initialize the AIProjectClient using your Azure AI Project connection string:
 	```python
 	# Set up the project client
@@ -95,7 +124,7 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 	Create and execute the run to process the message:
 	```python
         # Process the message with the agent, synchronously
-        run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         print(f"Run finished with status: {run.status}")
 	```
 
@@ -126,12 +155,17 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
     After processing, delete the thread and agent to clean up resources:
     ```python
         # Clean up resources
-        project_client.agents.delete_thread(thread.id)
+    	project_client.agents.delete_thread(thread.id)
         project_client.agents.delete_agent(agent.id)
     ```
 
 10. **View the File**
 
+	In VS Code with the terminal activated, run the Python script:
+	```bash
+	python lab1.py
+	```
+	Alternatively with the python file open, click the run button at the top right
 	Once complete, you can find the file in the `blog` subdirectory of your project directory. The file will be named `blog-{YYMMDDHHMMSS}.md`, where `{YYMMDDHHMMSS}` is the timestamp when the file was created.
 
 By following these steps, you will create a code interpreter agent that generates and executes Python code to save output to a file, leveraging Azure AI Agent Service.
