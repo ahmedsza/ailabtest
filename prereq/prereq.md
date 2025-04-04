@@ -45,16 +45,21 @@ To get started with building AI agents and applications, you will need to set up
 
 ![User Management]({C286E8B0-5A64-4D67-B9BA-17F53F5374AC}.png)
 
-1. **Model Deployment**
+6. **Model Deployment**
     - Click on "Models and Endpoint" in the left navigation
     - Create a deployment of the gpt-4 model
     ![Model Deployment]({A05D72D3-1D2E-41AE-BF43-CBB97E5AFFF7}.png | width=400)
 
-2. **Cognitive Services OpenAI User Permissions**
+7. **Cognitive Services OpenAI User Permissions**
     - In Azure Portal, navigate to the Azure AI Service resource
     - Go to IAM settings
     - Assign the role "Cognitive Services OpenAI User" to the user associated with the Azure AI Project
   
+8. **Setup Bing Grounding**
+    - Create a Bing Grounding resource in Azure AI Project
+    - Create a Bing Grounding tool connection
+    - Refer to [Bing Grounding](../step8_grounding.md) for more information
+- 
 ## Software Requirements
 
 Before proceeding with the labs, ensure you have the following software installed:
