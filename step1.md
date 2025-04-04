@@ -11,13 +11,39 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 
 #### Step-by-Step Guide:
 
-1. **Install Required Packages**
+1. **Setup, Create folder, setup virtual environment, install packages**
 
-	Ensure you have the required packages installed. You will need the following packages:
+
+	- Open your project folder
+
+	Create a new directory for this lab:
+	```bash
+	mkdir ailab
+	cd ailab
+	```
+	Open the folder in Visual Studio Code
+
+	Open a terminal in VS Code, create and activate a Python virtual environment:
+
+	Windows:
+	```cmd
+	python -m venv .venv
+	.venv\Scripts\activate
+	```
+
+	Linux/macOS:
+	```bash
+	python3 -m venv .venv
+	source .venv/bin/activate
+	```
+
+
+	Ensure you have the required packages installed. You will need the following packages. You can run this from the terminal:
+
 	```python
-	azure-ai-projects
-	azure-identity
-	dotenv
+	pip install azure-ai-projects
+	pip install azure-identity
+	pip install dotenv
 	```
 
 2. **Set Up Environment Variables**
@@ -29,7 +55,7 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 	```
 
 3. **Import Necessary Libraries**
-
+	Create a file eg  `code_interpreter_agent.py` 
 	Import the necessary libraries for Azure AI Agent Service, and load the environment variables:
 	```python
 	from azure.ai.projects import AIProjectClient
@@ -44,6 +70,9 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 
 4. **Initialize the Project Client**
 
+	
+	
+	```python
 	Initialize the AIProjectClient using your Azure AI Project connection string:
 	```python
 	# Set up the project client
@@ -95,7 +124,7 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 	Create and execute the run to process the message:
 	```python
         # Process the message with the agent, synchronously
-        run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         print(f"Run finished with status: {run.status}")
 	```
 
