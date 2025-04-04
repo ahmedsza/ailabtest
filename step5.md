@@ -21,12 +21,16 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
 
     ```
 
+    Create a folder data in the AzureAIAgent5 directory. Copy intro_rag.md from the repo into the data directory.
+
+    
 2. **Create Necessary User Secrets**
 
     Create user secrets by updating `"Your Azure AI Project Connection String"` with your actual connection string and running the following from the command line:
     ```
     dotnet user-secrets init
     dotnet user-secrets set "AzureAI:ProjectConnectionString" "Your Azure AI Project Connection String"
+
     ```
 
 3. **Add Application Settings**
@@ -60,7 +64,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
     dotnet add package Azure.Identity
     dotnet add package Microsoft.Extensions.Configuration
     dotnet add package Microsoft.Extensions.Configuration.UserSecrets
-    
+
     ```
 
 5. **Import Namespaces**
