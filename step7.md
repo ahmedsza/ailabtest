@@ -9,6 +9,9 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
 - An IDE or text editor like Visual Studio or Visual Studio Code
 - Azure AI Project connection string
 - Deployed chat completion model, such as gpt-4o, in Azure AI Project
+- Bing Grounding resource created
+- Bing Grounding tool connection in Azure AI Project
+  - Refer to [Bing Grounding](step8_grounding.md) for more information
 
 #### Step-by-Step Guide
 
