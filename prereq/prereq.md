@@ -48,7 +48,7 @@ To get started with building AI agents and applications, you will need to set up
 6. **Model Deployment**
     - Click on "Models and Endpoint" in the left navigation
     - Create a deployment of the gpt-4 model
-    ![Model Deployment]({A05D72D3-1D2E-41AE-BF43-CBB97E5AFFF7}.png | width=400)
+    ![Model Deployment]({A05D72D3-1D2E-41AE-BF43-CBB97E5AFFF7}.png )
 
 7. **Cognitive Services OpenAI User Permissions**
     - In Azure Portal, navigate to the Azure AI Service resource
