@@ -61,11 +61,12 @@ Learn how to create and configure a file search agent using Azure AI Agent Servi
 
 	Import the necessary libraries for Azure AI Agent Service, and load the environment variables:
 	```python
-	from azure.ai.projects import AIProjectClient
-	from azure.ai.projects.models import CodeInterpreterTool
-	from azure.identity import DefaultAzureCredential
-	from dotenv import load_dotenv
-	import os
+   from azure.ai.projects import AIProjectClient
+   from azure.ai.projects.models import FileSearchTool, VectorStoreDataSource, VectorStoreDataSourceAssetType
+   from azure.identity import DefaultAzureCredential
+   from dotenv import load_dotenv
+   import os
+   ```
 	
 	# Load environment variables from .env file
 	load_dotenv()
