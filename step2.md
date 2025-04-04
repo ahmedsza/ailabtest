@@ -56,6 +56,8 @@ Learn how to create and configure a file search agent using Azure AI Agent Servi
 	```
 
 3. **Import Necessary Libraries**
+   Create a file eg step2.py
+   Create a folder called data. Copy the file intro_rag.md which can be found in the repo into the data folder.
 
 	Import the necessary libraries for Azure AI Agent Service, and load the environment variables:
 	```python
