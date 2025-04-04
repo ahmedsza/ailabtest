@@ -17,6 +17,10 @@
     - https://microsoftlearning.github.io/mslearn-ai-agents/
     - Learn how to create and deploy AI agents using Azure OpenAI Service. This learning path covers fundamental concepts of AI agents, their architecture, and practical implementation using Microsoft's tools and services.
 
+- ## Azure AI Foundry Workshop
+  - https://workshop.aifoundry.app/
+  - A  workshop where you'll build a practical health and fitness AI advisor using Azure AI Foundry! You'll learn how to deploy an AI model, create an intelligent agent, and evaluate its performance - all through an engaging health-focused use case.
+
 - ## Develop AI Agents with Azure OpenAI and Semantic Kernel SDK
     - https://learn.microsoft.com/en-us/training/paths/develop-ai-agents-azure-open-ai-semantic-kernel-sdk/
     - A comprehensive guide to building AI agents using Microsoft's Semantic Kernel SDK. Learn to create, deploy, and manage intelligent agents that can understand context, make decisions, and perform tasks using natural language.
