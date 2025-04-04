@@ -18,6 +18,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
     ```
     dotnet new console -n AzureAIAgent5
     cd AzureAIAgent5
+
     ```
 
 2. **Create Necessary User Secrets**
@@ -59,6 +60,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
     dotnet add package Azure.Identity
     dotnet add package Microsoft.Extensions.Configuration
     dotnet add package Microsoft.Extensions.Configuration.UserSecrets
+    
     ```
 
 5. **Import Namespaces**
