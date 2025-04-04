@@ -45,7 +45,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
 	pip install dotenv
 	pip install autogen-agentchat
 	pip install autogen-ext[openai]
-    
+
 	```
 
 2. **Set Up Environment Variables**
@@ -142,7 +142,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
 
 4. **Create an Azure AI Agent using Code Interpreter Tool**
 
-    In this step, we will create an Azure AI Agent that usese the Code Interpreter Tool, following the same pattern as used in the previous labs. To do this, create a new file called `web_ai_agent.py` and copy the following code into it:
+    In this step, we will create an Azure AI Agent that usese the Code Interpreter Tool, following the same pattern as used in the previous labs. To do this, create a new file called `save_blog_agent.py` and copy the following code into it:
     ```python
     from azure.ai.projects import AIProjectClient
     from azure.ai.projects.models import CodeInterpreterTool
