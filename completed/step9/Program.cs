@@ -12,21 +12,21 @@ using Microsoft.SemanticKernel.Agents.Chat;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 
+
 public partial class Program
 {
     const string HostName = "SeachAssistant";
     const string HostInstructions = "Search information ";
 
-    // Main method and other code will go here
     public static async Task Main(string[] args)
     {
-        var deployment = "gpt-4o";
-        var endpoint = "Your AOAI endpoint";
-        var key = "Your AOAI Key";
+     var deployment = "gpt-4o";
+     var endpoint = "Your AOAI endpoint";
+     var key = "Your AOAI Key";
+
         var kernel = Kernel.CreateBuilder()
         .AddAzureOpenAIChatCompletion(deployment, endpoint, key)
         .Build();
-
         const string SearchHostName = "Search";
         const string SearchHostInstructions = "You are a search expert, help me use tools to find relevant knowledge";
 #pragma warning disable SKEXP0110
@@ -39,6 +39,7 @@ public partial class Program
                         Kernel = kernel,
                         Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() }),
                     };
+
         const string SaveHostName = "SaveBlog";
         const string SavehHostInstructions = "Save blog content. Respond with 'Saved' to when your blog are saved.";
 #pragma warning disable SKEXP0110
@@ -52,21 +53,13 @@ public partial class Program
                         Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() }),
                     };
 
-        const string WriteBlogName = "WriteBlog";
-        const string WriteBlogInstructions =
-               """
-        You are a blog writer, please help me write a blog based on bing search content.
-        """;
-#pragma warning disable SKEXP0110
-
         ChatCompletionAgent write_blog_agent =
-                    new()
-                    {
-                        Name = WriteBlogName,
-                        Instructions = WriteBlogInstructions,
-                        Kernel = kernel
-                    };
-
+        new()
+        {
+            Name = "WriteBlog",
+            Instructions = "You are a blog writer, please help me write a blog based on bing search content.",
+            Kernel = kernel
+        };
 #pragma warning disable SKEXP0110
 
         KernelPlugin search_plugin = KernelPluginFactory.CreateFromType<SearchPlugin>();
@@ -76,8 +69,6 @@ public partial class Program
 
         KernelPlugin save_blog_plugin = KernelPluginFactory.CreateFromType<SavePlugin>();
         save_blog_agent.Kernel.Plugins.Add(save_blog_plugin);
-
-#pragma warning disable SKEXP0110
 
         AgentGroupChat chat =
                     new(search_agent, write_blog_agent, save_blog_agent)
@@ -95,10 +86,10 @@ public partial class Program
                                     }
                             }
                     };
-#pragma warning disable SKEXP0110
+
 
         ChatMessageContent input = new(AuthorRole.User, """
-                    I am writing a blog about GraphRAG. Search for the following 2 questions and write an Afrikaans blog based on the search results ,save it           
+                    I am writing a blog about GraphRAG. Search for the following 2 questions and write a Afrikaans blog based on the search results ,save it           
                         1. What is Microsoft GraphRAG?
                         2. Vector-based RAG vs GraphRAG
                     """);
@@ -113,21 +104,25 @@ public partial class Program
         {
             Console.WriteLine($"# {content.Role} - {content.AuthorName ?? "*"}: '{content.Content}'");
         }
-        // code comes below 
-    }
-}
 
-// ApprovalTerminationStrategy class will go here
+    }
 
 #pragma warning disable SKEXP0110
 
-internal sealed class ApprovalTerminationStrategy : TerminationStrategy
-{
-    // Terminate when the final message contains the term "approve"
-    protected override Task<bool> ShouldAgentTerminateAsync(Microsoft.SemanticKernel.Agents.Agent agent, IReadOnlyList<ChatMessageContent> history, CancellationToken cancellationToken)
-        => Task.FromResult(history[history.Count - 1].Content?.Contains("Saved", StringComparison.OrdinalIgnoreCase) ?? false);
+    private sealed class ApprovalTerminationStrategy : TerminationStrategy
+    {
+        // Terminate when the final message contains the term "approve"
+        protected override Task<bool> ShouldAgentTerminateAsync(Microsoft.SemanticKernel.Agents.Agent agent, IReadOnlyList<ChatMessageContent> history, CancellationToken cancellationToken)
+            => Task.FromResult(history[history.Count - 1].Content?.Contains("Saved", StringComparison.OrdinalIgnoreCase) ?? false);
+    }
+
 }
-// Custom headers policy class will go here
+
+
+
+#pragma warning disable SKEXP0110
+
+
 internal class CustomHeadersPolicy : HttpPipelineSynchronousPolicy
 {
     public override void OnSendingRequest(HttpMessage message)
@@ -135,18 +130,18 @@ internal class CustomHeadersPolicy : HttpPipelineSynchronousPolicy
         message.Request.Headers.Add("x-ms-enable-preview", "true");
     }
 }
-// Search plugin class will go here
+
 public sealed class SearchPlugin
 {
     [KernelFunction, Description("Search by Bing")]
     public async Task<string> Search([Description("search Item")] string searchItem)
     {
         // Implementation of the search functionality will go here
-        var connectionString = "Your Azure AI Agent Service Connection String";
+        var connectionString = "ENTER YOUR AI PROJECT CONNECTION STRING HERE";
         var clientOptions = new AIProjectClientOptions();
         clientOptions.AddPolicy(new CustomHeadersPolicy(), HttpPipelinePosition.PerCall);
         var projectClient = new AIProjectClient(connectionString, new DefaultAzureCredential(), clientOptions);
-        var BING_CONNECTION_NAME = "ENTER_BING_CONNECTION_NAME";
+        var BING_CONNECTION_NAME = "ENTER BING CONNECTION NAME HERE";
         ConnectionResponse bingConnection = await projectClient.GetConnectionsClient().GetConnectionAsync(BING_CONNECTION_NAME);
         var connectionId = bingConnection.Id;
         AgentsClient agentClient = projectClient.GetAgentsClient();
@@ -163,7 +158,7 @@ public sealed class SearchPlugin
         Azure.Response<ThreadMessage> messageResponse = await agentClient.CreateMessageAsync(
              thread.Id,
              MessageRole.User,
-            searchItem);
+           searchItem);
         Azure.Response<ThreadRun> runResponse = await agentClient.CreateRunAsync(thread, agent);
         // Poll until completion
         do
@@ -196,10 +191,8 @@ public sealed class SearchPlugin
         }
 
         return searchResult;
-
     }
 }
-// Save plugin class will go here
 
 public sealed class SavePlugin
 {
@@ -207,9 +200,8 @@ public sealed class SavePlugin
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:Use properties where appropriate", Justification = "Too smart")]
     public async Task<string> Save([Description("save blog content")] string content)
     {
-        // Implementation details will follow
         Console.Write("###" + content);
-        var connectionString = "YOUR_CONNECTION_STRING";
+        var connectionString = "ENTER YOUR AI PROJECT CONNECTION STRING HERE";
         AgentsClient client = new AgentsClient(connectionString, new DefaultAzureCredential());
         Azure.Response<Azure.AI.Projects.Agent> agentResponse = await client.CreateAgentAsync(
             model: "gpt-4o",
@@ -235,6 +227,7 @@ public sealed class SavePlugin
         while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == RunStatus.InProgress);
         Azure.Response<PageableList<ThreadMessage>> afterRunMessagesResponse = await client.GetMessagesAsync(thread.Id);
         IReadOnlyList<ThreadMessage> messages = afterRunMessagesResponse.Value.Data;
+
         foreach (ThreadMessage threadMessage in messages)
         {
             foreach (MessageContent contentItem in threadMessage.ContentItems)
@@ -249,13 +242,12 @@ public sealed class SavePlugin
                         System.IO.Directory.CreateDirectory("./blog");
                         using System.IO.FileStream stream = System.IO.File.OpenWrite($"./blog/{mdfile}");
                         fileBytes.Value.ToStream().CopyTo(stream);
+                        Console.WriteLine(mdfile);
                     }
                 }
             }
         }
         return "Saved";
-
     }
 }
-
 
