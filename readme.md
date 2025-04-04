@@ -1,3 +1,7 @@
+# Pre-requisites
+
+[See all requirements to get up and running](prereq/prereq.md)
+
 # Azure AI Labs - Complete Guide
 
 This document outlines all the labs, provides quick navigation links to each step, and describes what each lab does.
