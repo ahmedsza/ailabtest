@@ -7,141 +7,196 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
 - Azure account with necessary permissions
 - .NET SDK installed
 - An IDE or text editor like Visual Studio or Visual Studio Code
+- Azure AI Project connection string
+- Deployed chat completion model, such as gpt-4o, in Azure AI Project
 
 #### Step-by-Step Guide
 
 1. **Create a New C# Console Application**
-   Open your terminal or command prompt and run the following command to create a new C# console application:
-   ```
-   dotnet new console -n AzureAIAgentApp
-   cd AzureAIAgentApp
-   ```
 
-2. **Add Necessary NuGet Packages**
-   Add the required NuGet packages for Azure AI Agent Service and Azure Identity:
-   ```
-   dotnet add package Azure.AI.Projects --version 1.0.0-beta.2
-   dotnet add package Azure.Identity --version 1.13.1
-   ```
-
-3. **Import Namespaces**
-   Import the necessary namespaces for the Azure SDKs at the top of your `Program.cs` file:
-   ```csharp
-   using System;
-   using System.Collections.Generic;
-   using System.Threading.Tasks;
-   using Azure.Core;
-   using Azure.Identity;
-   using Azure.AI.Projects;
-   ```
-
-4. **Define Connection String**
-   Define the connection string for the Azure AI Agent Service:
-   ```csharp
-   var connectionString = "Your Azure AI Agent Service Connection String";
-   ```
-
-5. **Initialize AgentsClient**
-   Create an instance of `AgentsClient` with the connection string and default Azure credentials:
-   ```csharp
-   AgentsClient client = new AgentsClient(connectionString, new DefaultAzureCredential());
-   ```
-
-6. **Upload a File**
-   Upload a file to the Azure AI Agent Service:
-   ```csharp
-   Azure.Response<AgentFile> uploadAgentFileResponse = await client.UploadFileAsync(
-       filePath: "./data/intro_rag.md",
-       purpose: AgentFilePurpose.Agents
-   );
-   AgentFile uploadedAgentFile = uploadAgentFileResponse.Value;
-   ```
-
-7. **Create a Vector Store**
-   Create a vector store using the uploaded file:
-   ```csharp
-   VectorStore vectorStore = await client.CreateVectorStoreAsync(
-       fileIds: new List<string> { uploadedAgentFile.Id },
-       name: "my_vector_store"
-   );
-   ```
-
-8. **Create a File Search Tool Resource**
-   Create a file search tool resource with the vector store ID:
-   ```csharp
-   FileSearchToolResource fileSearchToolResource = new FileSearchToolResource();
-   fileSearchToolResource.VectorStoreIds.Add(vectorStore.Id);
-   ```
-
-9. **Create an Agent**
-   Create an agent using the `AgentsClient` with the file search tool resource:
-   ```csharp
-   Azure.Response<Agent> agentResponse = await client.CreateAgentAsync(
-       model: "gpt-4o-mini",
-       name: "RAG Agent",
-       instructions: "You are a helpful agent that can help fetch data from files you know about.",
-       tools: new List<ToolDefinition> { new FileSearchToolDefinition() },
-       toolResources: new ToolResources() { FileSearch = fileSearchToolResource }
-   );
-   Agent agent = agentResponse.Value;
-   ```
-
-10. **Create a Communication Thread**
-    Create a communication thread for the agent:
-    ```csharp
-    Azure.Response<AgentThread> threadResponse = await client.CreateThreadAsync();
-    AgentThread thread = threadResponse.Value;
+    Open your terminal or command prompt and run the following command to create a new C# console application:
+    ```
+    dotnet new console -n AzureAIAgent6
+    cd AzureAIAgent6
     ```
 
-11. **Send a Message to the Agent**
-    Send a message to the thread with specific instructions for the agent:
-    ```csharp
-    Azure.Response<ThreadMessage> messageResponse = await client.CreateMessageAsync(
-        thread.Id,
-        MessageRole.User,
-        "Can you introduce GraphRAG?"
-    );
-    ThreadMessage message = messageResponse.Value;
+2. **Create Necessary User Secrets**
+
+    Create user secrets by updating `"Your Azure AI Project Connection String"` with your actual connection string and running the following from the command line:
+    ```
+    dotnet user-secrets init
+    dotnet user-secrets set "AzureAI:ProjectConnectionString" "Your Azure AI Project Connection String"
     ```
 
-12. **Execute a Run**
-    Create and execute a run for the agent to process the message:
-    ```csharp
-    Azure.Response<ThreadRun> runResponse = await client.CreateRunAsync(thread, agent);
+3. **Add Application Settings**
 
-    do
+    Create a new file named `appsettings.json` in the root of your project and add the following content:
+    ```json
     {
-        await Task.Delay(TimeSpan.FromMilliseconds(500));
-        runResponse = await client.GetRunAsync(thread.Id, runResponse.Value.Id);
-    } while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == RunStatus.InProgress);
-    ```
-
-13. **Retrieve and Display Messages**
-    Retrieve and display messages from the thread after the run is completed:
-    ```csharp
-    Azure.Response<PageableList<ThreadMessage>> afterRunMessagesResponse = await client.GetMessagesAsync(thread.Id);
-    IReadOnlyList<ThreadMessage> messages = afterRunMessagesResponse.Value.Data;
-
-    foreach (ThreadMessage threadMessage in messages)
-    {
-        Console.Write($"{threadMessage.CreatedAt:yyyy-MM-dd HH:mm:ss} - {threadMessage.Role,10}: ");
-        foreach (MessageContent contentItem in threadMessage.ContentItems)
-        {
-            if (contentItem is MessageTextContent textItem)
-            {
-                Console.Write(textItem.Text);
-            }
-            else if (contentItem is MessageImageFileContent imageFileItem)
-            {
-                Console.Write($"<image from ID: {imageFileItem.FileId}>");
-            }
-            Console.WriteLine();
+        "AzureAI": {
+            "ModelName": "gpt-4o"
         }
     }
     ```
 
-14. **Insert Your Connection String**
-    Replace `"Your Azure AI Agent Service Connection String"` with your actual Azure AI Agent Service connection string.
+4. **Add appsettings.json to the Project**
+
+    Ensure that `appsettings.json` is included in your project. You can do this by right-clicking on the project in Visual Studio and selecting "Add" > "Existing Item..." and then selecting `appsettings.json`.
+    Alternatively, you can add it manually in the `.csproj` file by adding the following lines:
+    ```xml
+    <ItemGroup>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    ```
+
+4. **Add Necessary NuGet Packages**
+
+    Add the required NuGet packages for Azure AI Agent Service and Azure Identity:
+    ```
+    dotnet add package Azure.AI.Projects --version 1.0.0-beta.6
+    dotnet add package Azure.Identity
+    dotnet add package Microsoft.Extensions.Configuration
+    dotnet add package Microsoft.Extensions.Configuration.UserSecrets
+    ```
+
+5. **Import Namespaces**
+
+    Delete the contents of `Program.cs` and import the necessary namespaces for the Azure SDKs at the top of your `Program.cs` file:
+    ```csharp
+    using Azure.AI.Projects;
+    using Azure.Identity;
+    using Microsoft.Extensions.Configuration;
+    ```
+
+6. **Load Configuration Settings**
+
+    Load the configuration settings from `appsettings.json` and user secrets in your `Program.cs` file:
+    ```csharp
+    // Load environment variables
+    var configuration = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: false)
+        .AddUserSecrets<Program>()
+        .Build();
+    ```
+
+7. **Initialize the Project Client**
+
+	Initialize the AIProjectClient using your Azure AI Project connection string:
+	```csharp
+    // Set up the project client
+    AgentsClient client = new AgentsClient(
+        configuration["AzureAI:ProjectConnectionString"],
+        new DefaultAzureCredential());
+	```
+
+8. **Upload File and Create Vector Store**
+
+   Upload the local file to Azure and create a vector store:
+	```csharp
+    // Upload the local file to Azure
+    AgentFile uploadedAgentFile = await client.UploadFileAsync(
+        filePath: "../data/intro_rag.md",
+        purpose: AgentFilePurpose.Agents
+    );
+
+    // Create a vector store with the uploaded file
+    VectorStore vectorStore = await client.CreateVectorStoreAsync(
+        fileIds: new List<string> { uploadedAgentFile.Id },
+        name: "sample_vector_store"
+    );
+    Console.WriteLine($"Created vector store, vector store ID: {vectorStore.Id}");
+	```
+
+9. **Create a File Search Tool**
+
+    Create a file search tool using the created vector store:
+    ```csharp
+    // Create a File Search tool, using the vector store as a data source
+    FileSearchToolDefinition fileSearchTool = new FileSearchToolDefinition();
+    FileSearchToolResource fileSearchToolResource = new FileSearchToolResource();
+    fileSearchToolResource.VectorStoreIds.Add(vectorStore.Id);
+    ```
+
+10. **Create and Configure the Agent**
+
+    Create and configure the file search agent:
+    ```csharp
+    // Create an agent with the File Search tool
+    Agent agent = await client.CreateAgentAsync(
+        model: configuration["AzureAI:ModelName"],
+        name: "ai-lab-agent6",
+        instructions: "You are a helpful agent",
+        tools: [fileSearchTool],
+        toolResources: new ToolResources() { FileSearch = fileSearchToolResource }
+    );
+    ```
+
+11. **Create a Thread and Message**
+
+	Create a thread for communication and send a message with instructions for the agent:
+	```csharp
+    // Create a thread for our interaction with the agent
+    AgentThread thread = await client.CreateThreadAsync();
+
+    // Create a message to send to the agent on the created thread
+    ThreadMessage message = await client.CreateMessageAsync(
+        thread.Id,
+        MessageRole.User,
+        @"
+            What is GraphRAG?
+        "
+    );
+	```
+
+12. **Execute the Run**
+
+	Create and execute the run to process the message:
+	```csharp
+    // Process the message with the agent, asynchronously
+    ThreadRun run = await client.CreateRunAsync(thread.Id, agent.Id);
+    do
+    {
+        await Task.Delay(TimeSpan.FromMilliseconds(500));
+        run = await client.GetRunAsync(thread.Id, run.Id);
+    } while (run.Status == RunStatus.Queued || run.Status == RunStatus.InProgress);
+    Console.WriteLine($"Run finished with status: {run.Status}");
+	```
+
+13. **Display the Response Message**
+
+	Display the response message:
+	```csharp
+    // Check the status of the run
+    if (run.Status == RunStatus.Failed)
+    {
+        Console.WriteLine($"Run failed with error: {run.LastError}");
+    }
+    else
+    {
+        // Get the response messages
+        Azure.Response<PageableList<ThreadMessage>> afterRunMessagesResponse = await client.GetMessagesAsync(thread.Id);
+        IReadOnlyList<ThreadMessage> messages = afterRunMessagesResponse.Value.Data;
+
+        // Print the last message from the assistant
+        var lastMessage = messages.Last(m => m.Role == MessageRole.Agent)?.ContentItems[0] as MessageTextContent;
+        if (lastMessage is not null)
+        {
+            Console.WriteLine($"Last message: {lastMessage.Text}");
+        }
+    }
+	```
+
+14. **Delete the Vector Store, Thread and Agent**
+
+    After processing, delete the vector store, thread and agent to clean up resources:
+    ```csharp
+    // Clean up resources
+    await client.DeleteVectorStoreAsync(vectorStore.Id);
+    await client.DeleteThreadAsync(thread.Id);
+    await client.DeleteAgentAsync(agent.Id);
+    ```
 
 15. **Run the Application**
     Save the changes and run your application using the following command:
