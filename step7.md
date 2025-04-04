@@ -18,6 +18,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     ```
     dotnet new console -n AzureAIAgent7
     cd AzureAIAgent7
+
     ```
 
 2. **Create Necessary User Secrets**
@@ -26,6 +27,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     ```
     dotnet user-secrets init
     dotnet user-secrets set "AzureAI:ProjectConnectionString" "Your Azure AI Project Connection String"
+
     ```
 
 3. **Add Application Settings**
@@ -60,6 +62,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     dotnet add package Azure.Identity
     dotnet add package Microsoft.Extensions.Configuration
     dotnet add package Microsoft.Extensions.Configuration.UserSecrets
+    
     ```
 
 5. **Import Namespaces**
