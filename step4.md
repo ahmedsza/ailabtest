@@ -192,7 +192,7 @@ Learn how to create and orchestrate multiple AI agents using AutoGen and Azure A
             )
 
             # Process the message with the agent, synchronously
-            run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
             print(f"Run finished with status: {run.status}")
 
             # Check the status of the run
