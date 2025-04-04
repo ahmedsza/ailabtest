@@ -97,7 +97,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
 	```csharp
     // Upload the local file to Azure
     AgentFile uploadedAgentFile = await client.UploadFileAsync(
-        filePath: "../data/intro_rag.md",
+        filePath: "./data/intro_rag.md",
         purpose: AgentFilePurpose.Agents
     );
 
