@@ -1,431 +1,427 @@
-# Azure AI Agent Service with Microsoft Semantic Kernel
+### Hands-On Lab: Azure AI Agent Service with Microsoft Semantic Kernel
 
-## Prerequisites
-- An Azure account
-- Visual Studio or Visual Studio Code
-- .NET SDK installed
-- Azure AI Project created. Will require
-  - connection string
-  - endpoint URL
-  - key
-- Bing Grounding Setup. See [Grounding with Bing Search Setup](bing_grounding.md)
-- Azure OpenAI deployment, such as gpt-4o, in Azure AI Project. Note that gpt-4o-mini is not supported with Bing Grounding. 
-- Appropriate permissions to Azure AI Project
-- Logged into appropriate Azure subscription via Azure CLI
+#### Objective
 
-## Step 1: Create a New Console Application
+Learn how to create and configure a web search agent using Semantic Kernel and Azure AI Agent Service to perform web searches.
 
-1. **Open Visual Studio or Visual Studio Code.**
-   - If using Visual Studio, select "Create a new project" and choose "Console App (.NET Core)".
-   - If using Visual Studio Code, open the terminal and run:
-     ```bash
-     dotnet new console -o AzureAIAgentApp
-     cd AzureAIAgentApp
-     ```
+#### Prerequisites
+- Pre-requisites are documented in the [PreReq](prereq/prereq.md) document.
 
-2. **Open the project.**
-   - In Visual Studio, open the AzureAIAgentApp.csproj .
-   - In Visual Studio Code, open the folder `AzureAIAgentApp`. You can use the command `code .` to open the project in VS Code.
+#### Step-by-Step Guide
 
-## Step 2: Install NuGet Packages
+1. **Create a New C# Console Application**
 
+    Open your terminal or command prompt and run the following command to create a new C# console application:
+    ```
+    dotnet new console -n AzureAIAgent8
+    cd AzureAIAgent8
+    ```
 
+1. **Open the project**
 
-Install the required packages by running the following commands:
+    - In Visual Studio, open the AzureAIAgent8.csproj .
+    - In Visual Studio Code, open the folder `AzureAIAgent8`. You can use the command `code .` to open the project in VS Code.
 
-   ```bash
-   dotnet add package Microsoft.SemanticKernel.Agents.Abstractions --version 1.32.0-alpha
-   dotnet add package Microsoft.SemanticKernel.Agents.Core --version 1.32.0-alpha
-   dotnet add package Microsoft.SemanticKernel.Agents.OpenAI --version 1.32.0-alpha
-   dotnet add package Microsoft.SemanticKernel.Connectors.AzureOpenAI --version 1.32.0-alpha
-   dotnet add package Azure.AI.Projects --version 1.0.0-beta.2
-   dotnet add package Azure.Identity --version 1.13.1
+1. **Add Necessary NuGet Packages**
 
-   ```
+    Add the required NuGet packages for Azure AI Agent Service and Azure Identity:
+    ```
+    dotnet add package Azure.AI.Projects --version 1.0.0-beta.6
+    dotnet add package Azure.Identity
+    dotnet add package Microsoft.Extensions.Configuration
+    dotnet add package Microsoft.Extensions.Configuration.Json
+    dotnet add package Microsoft.SemanticKernel.Agents.Abstractions
+    dotnet add package Microsoft.SemanticKernel.Agents.Core
+    dotnet add package Microsoft.SemanticKernel.Agents.OpenAI --prerelease
+    dotnet add package Microsoft.SemanticKernel.Connectors.AzureOpenAI
+    ```
 
+1. **Add Application Settings**
 
-
-## Step 3: Update Program.cs
-
-### Task 3.1: Import Necessary Namespaces
-Open Program.cs in your project.
-
-Add the following using directives at the top of the file to import necessary namespaces
-
-Explanation: These namespaces are required for accessing Azure services, handling kernel functionality, and managing HTTP requests and responses.
-
-```csharp
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using Azure.Identity;
-using Azure.AI.Projects;
-using Azure.Core;
-using Azure.Core.Pipeline;
-using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Agents;
-using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
-```
-
-### Task 3.2: Define Custom Headers Policy
-
-Add the following class definition in Program.cs:
-
-Explanation: This class defines a custom policy to add specific headers to HTTP requests. In this case, it adds a header to enable preview features in Azure AI requests.
-
-```csharp
-internal class CustomHeadersPolicy : HttpPipelineSynchronousPolicy
-{
-    public override void OnSendingRequest(HttpMessage message)
+    Create a new file named `appsettings.json` in the root of your project and add the following content, Replace the BINGCONNECTIONNAME with your Bing Connection Name:
+    ```json
     {
-        message.Request.Headers.Add("x-ms-enable-preview", "true");
+        "AzureAI": {
+            "ProjectConnectionString": "<your-connection-string>",
+            "ModelName": "<your-model-name>",
+            "BingConnectionName": "<your-bing-connection-name>",
+            "ModelDeploymentName": "<your-model-deployment-name>",
+            "AzureOpenAIEndpoint": "<your-azure-openai-endpoint>",
+        }
     }
-}
-```
+    ```
+    **NOTE**: 
+    - Replace `<your-connection-string>` with your actual Azure AI Project connection string.
+    - Replace `<your-model-name>` with the name of the model you want to use (e.g., "gpt-4o").
+    - Replace `<your-bing-connection-name>` with the name of your Bing connection in your AI Project's management center.
 
-### Task 3.3: Define Search Plugin
+1. **Add appsettings.json to the Project**
 
-Let's break down the implementation of the Search Plugin into manageable steps:
+    Ensure that `appsettings.json` is included in your project. You can do this by right-clicking on the project in Visual Studio and selecting "Add" > "Existing Item..." and then selecting `appsettings.json`.
+    Alternatively, you can add it manually in the `.csproj` file by adding the following lines:
+    ```xml
+    <ItemGroup>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    ```
 
-1. **Create the Plugin Class Structure**
+1. **Add Compiler Warning Suppressions**
+
+    The Agent Framework is experimental and requires warning suppression. This may addressed in as a property in the project file (.csproj):
+    ```xml
+        <PropertyGroup>
+            <NoWarn>$(NoWarn);SKEXP0001;SKEXP0010;SKEXP0110</NoWarn>
+        </PropertyGroup>
+    ```
+
+1. **Create an Azure AI Agent using Bing Grounding Tool**
+
+    In this sample, we will create an Azure AI Agent that usese the Bing Grounding Tool, following the same pattern as used in the previous labs. To do this, create a new file called `SearchAgents.cs` and copy the following code into it:
     ```csharp
+    using System.ComponentModel;
+    using Azure.AI.Projects;
+    using Azure.Identity;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.SemanticKernel;
+
     public sealed class SearchPlugin
     {
-         [KernelFunction, Description("Search by Bing")]
-         public async Task<string> Search([Description("search Item")] string searchItem)
-         {
-             // Implementation of the search functionality will go here
-         }
-    }
-    ```
-    - Creates a sealed class that will handle search functionality
-    - Defines a method decorated with KernelFunction attribute for Semantic Kernel integration
-
-2. **Set Up Azure AI Project Client**
-    ```csharp
-    var connectionString = "Your Azure AI Agent Service Connection String";
-    var clientOptions = new AIProjectClientOptions();
-    clientOptions.AddPolicy(new CustomHeadersPolicy(), HttpPipelinePosition.PerCall);
-    var projectClient = new AIProjectClient(connectionString, new DefaultAzureCredential(), clientOptions);
-    ```
-    - Initializes the client with connection string
-    - Configures client options with custom headers
-    - Creates the project client instance
-
-3. **Get Bing Connection**
-    ```csharp
-    var BING_CONNECTION_NAME = "ENTER_BING_CONNECTION_NAME"; 
-    ConnectionResponse bingConnection = await projectClient.GetConnectionsClient().GetConnectionAsync(BING_CONNECTION_NAME);
-    var connectionId = bingConnection.Id;
-    ```
-    - Retrieves the Bing search connection
-    - Stores the connection ID for later use
-
-4. **Configure Agent Tools**
-    ```csharp
-    AgentsClient agentClient = projectClient.GetAgentsClient();
-    ToolConnectionList connectionList = new ToolConnectionList { ConnectionList = { new ToolConnection(connectionId) } };
-    BingGroundingToolDefinition bingGroundingTool = new BingGroundingToolDefinition(connectionList);
-    ```
-    - Sets up the agent client
-    - Creates connection list for tools
-    - Configures Bing grounding tool
-
-5. **Create Agent Instance**
-    ```csharp
-    Azure.Response<Azure.AI.Projects.Agent> agentResponse = await agentClient.CreateAgentAsync(
-         model: "gpt-4o",
-         name: "my-assistant",
-         instructions: "You are a helpful assistant.",
-         tools: new List<ToolDefinition> { bingGroundingTool });
-    Azure.AI.Projects.Agent agent = agentResponse.Value;
-    ```
-    - Creates an AI agent with specified model and configuration
-
-6. **Create and Manage Thread**
-    ```csharp
-    Azure.Response<AgentThread> threadResponse = await agentClient.CreateThreadAsync();
-    AgentThread thread = threadResponse.Value;
-    Azure.Response<ThreadMessage> messageResponse = await agentClient.CreateMessageAsync(
-         thread.Id,
-         MessageRole.User,
-         "what is the current Microsoft stock price?");
-    ```
-    - Creates a new thread for conversation
-    - Adds initial message to the thread
-
-7. **Execute and Monitor Search**
-    ```csharp
-    Azure.Response<ThreadRun> runResponse = await agentClient.CreateRunAsync(thread, agent);
-    // Poll until completion
-    do
-    {
-         await Task.Delay(TimeSpan.FromMilliseconds(500));
-         runResponse = await agentClient.GetRunAsync(thread.Id, runResponse.Value.Id);
-    }
-    while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == InProgress);
-    ```
-    - Initiates the search operation
-    - Monitors progress until completion
-
-8. **Process and Return Results**
-    ```csharp
-    Azure.Response<PageableList<ThreadMessage>> afterRunMessagesResponse = await agentClient.GetMessagesAsync(thread.Id);
-    IReadOnlyList<ThreadMessage> messages = afterRunMessagesResponse.Value.Data;
-
-        string searchResult = "";
-
-        foreach (ThreadMessage threadMessage in messages)
+        [KernelFunction, Description("Search by Bing")]
+        public static async Task<string> Search([Description("search Item")] string searchItem)
         {
-            Console.Write($"{threadMessage.CreatedAt:yyyy-MM-dd HH:mm:ss} - {threadMessage.Role,10}: ");
+            Console.WriteLine($"Searching for: {searchItem}");
 
-            if(threadMessage.Role.ToString().ToLower() == "assistant")
+            // intialize the return value
+            string result = string.Empty;
+
+            // Load environment variables
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false)
+                .Build();
+
+            // Set up the project and agents client
+            AIProjectClient projectClient = new AIProjectClient(
+                configuration["AzureAI:ProjectConnectionString"],
+                new DefaultAzureCredential());
+            AgentsClient client = projectClient.GetAgentsClient();
+
+            // Create a connection to the Bing Connection
+            ConnectionResponse bingConnection = await projectClient.GetConnectionsClient().GetConnectionAsync(configuration["AzureAI:BingConnectionName"]);
+            var bingGroundingTool = new BingGroundingToolDefinition(new ToolConnectionList
             {
-                foreach (MessageContent contentItem in threadMessage.ContentItems)
+                ConnectionList = { new ToolConnection(bingConnection.Id) }
+            });
+
+            // Create an agent with the Bing Grounding tool
+            Agent agent = await client.CreateAgentAsync(
+                model: configuration["AzureAI:ModelName"],
+                name: "ai-lab-agent7",
+                instructions: @"
+                    You are a web search agent.
+                    Your only tool is search_tool - use it to find information.
+                    You make only one search call at a time.
+                    Once you have the results, you never do calculations based on them.",
+                tools: [bingGroundingTool]
+            );
+
+            // Create a thread for our interaction with the agent
+            AgentThread thread = await client.CreateThreadAsync();
+
+            // Create a message to send to the agent on the created thread
+            ThreadMessage message = await client.CreateMessageAsync(
+                thread.Id,
+                MessageRole.User,
+                searchItem
+            );
+
+            // Process the message with the agent, asynchronously
+            ThreadRun run = await client.CreateRunAsync(thread.Id, agent.Id);
+            do
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(500));
+                run = await client.GetRunAsync(thread.Id, run.Id);
+            } while (run.Status == RunStatus.Queued || run.Status == RunStatus.InProgress);
+            Console.WriteLine($"Run finished with status: {run.Status}");
+
+            // Check the status of the run
+            if (run.Status == RunStatus.Failed)
+            {
+                Console.WriteLine($"Run failed with error: {run.LastError}");
+            }
+            else
+            {
+                // Get the response messages
+                Azure.Response<PageableList<ThreadMessage>> afterRunMessagesResponse = await client.GetMessagesAsync(thread.Id);
+                IReadOnlyList<ThreadMessage> messages = afterRunMessagesResponse.Value.Data;
+
+                // Print the last message from the assistant
+                var lastMessage = messages.Last(m => m.Role == MessageRole.Agent)?.ContentItems[0] as MessageTextContent;
+                if (lastMessage is not null)
                 {
-                    if (contentItem is MessageTextContent textItem)
-                    {
-                        Console.Write(textItem.Text);
-                        searchResult = textItem.Text;
-                    }
-                    break;
+                    result = lastMessage.Text;
                 }
             }
-        }
 
-        return searchResult;
-    
+            // Clean up resources
+            await client.DeleteThreadAsync(thread.Id);
+            await client.DeleteAgentAsync(agent.Id);
+
+            // Return the result
+            return result;
+        }
+    }
     ```
-    - Retrieves search results
-    - Processes and formats the response
 
-#### Important Note: Remember to 
-- replace the connection string placeholder with your actual Azure AI Agent Service connection string before running the code.
-- replace the Bing connection name placeholder with your actual Bing connection name before running the code.
+ 1. **Create an Azure AI Agent using Code Interpreter Tool**
 
-### Complete SearchPlugin code
-```csharp
-public sealed class SearchPlugin
-{
-    [KernelFunction, Description("Search by Bing")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:Use properties where appropriate", Justification = "Too smart")]
-    public async Task<string> Search([Description("search Item")] string searchItem)
+    In this step, we will create an Azure AI Agent that usese the Code Interpreter Tool, following the same pattern as used in the previous labs. To do this, create a new file called `SaveBlogAgent.cs` and copy the following code into it:
+    ```csharp
+    using System.ComponentModel;
+    using Azure.AI.Projects;
+    using Azure.Identity;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.SemanticKernel;
+
+    public sealed class SaveBlogAgent
     {
-        var connectionString = "ENTER_YOUR_AI_CONNECTIONSTRING";
-        var clientOptions = new AIProjectClientOptions();
-        clientOptions.AddPolicy(new CustomHeadersPolicy(), HttpPipelinePosition.PerCall);
-        var projectClient = new AIProjectClient(connectionString, new DefaultAzureCredential(), clientOptions);
-        var BING_CONNECTION_NAME = "ENTER_BING_CONNECTION_NAME";
-        ConnectionResponse bingConnection = await projectClient.GetConnectionsClient().GetConnectionAsync(BING_CONNECTION_NAME);
-        var connectionId = bingConnection.Id;
-
-        AgentsClient agentClient = projectClient.GetAgentsClient();
-
-        ToolConnectionList connectionList = new ToolConnectionList
+        [KernelFunction, Description("Save blog")]
+        public static async Task<string> Save([Description("save blog content")] string content)
         {
-            ConnectionList = { new ToolConnection(connectionId) }
-        };
-        BingGroundingToolDefinition bingGroundingTool = new BingGroundingToolDefinition(connectionList);
+            Console.WriteLine($"Saving blog content");
+            
+            // Load environment variables
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false)
+                .Build();
 
-        Azure.Response<Azure.AI.Projects.Agent> agentResponse = await agentClient.CreateAgentAsync(
-            model: "gpt-4o",
-            name: "my-assistant",
-            instructions: "You are a helpful assistant.",
-            tools: new List<ToolDefinition> { bingGroundingTool });
-        Azure.AI.Projects.Agent agent = agentResponse.Value;
+            // Set up the project client
+            AgentsClient client = new AgentsClient(
+                configuration["AzureAI:ProjectConnectionString"],
+                new DefaultAzureCredential());
 
-        Azure.Response<AgentThread> threadResponse = await agentClient.CreateThreadAsync();
-        AgentThread thread = threadResponse.Value;
+            // Create a Code Interpreter tool
+            var codeInterpreter = new CodeInterpreterToolDefinition();
 
-        Azure.Response<ThreadMessage> messageResponse = await agentClient.CreateMessageAsync(
-            thread.Id,
-            MessageRole.User,
-            "what is the current Microsoft stock price?");
-        ThreadMessage message = messageResponse.Value;
+            // Create an agent with the Code Interpreter tool
+            Agent agent = await client.CreateAgentAsync(
+                model: configuration["AzureAI:ModelName"],
+                name: "ai-lab-agent5",
+                instructions: "You are a helpful agent",
+                tools: [codeInterpreter]
+            );
 
-        Azure.Response<ThreadRun> runResponse = await agentClient.CreateRunAsync(thread, agent);
+            // Create a thread for our interaction with the agent
+            AgentThread thread = await client.CreateThreadAsync();
 
-        do
-        {
-            await Task.Delay(TimeSpan.FromMilliseconds(500));
-            runResponse = await agentClient.GetRunAsync(thread.Id, runResponse.Value.Id);
-        }
-        while (runResponse.Value.Status == RunStatus.Queued || runResponse.Value.Status == InProgress);
+            // Create a message to send to the agent on the created thread
+            ThreadMessage message = await client.CreateMessageAsync(
+                thread.Id,
+                MessageRole.User,
+                @$"
+                    You are my Python programming assistant. Generate code and execute it according to the following requirements:
 
-        Azure.Response<PageableList<ThreadMessage>> afterRunMessagesResponse = await agentClient.GetMessagesAsync(thread.Id);
-        IReadOnlyList<ThreadMessage> messages = afterRunMessagesResponse.Value.Data;
+                    1. Save {content} to blog-{{YYMMDDHHMMSS}}.md
+                    2. Give me the download link for this file
+                "
+            );
 
-        string searchResult = "";
-
-        foreach (ThreadMessage threadMessage in messages)
-        {
-            Console.Write($"{threadMessage.CreatedAt:yyyy-MM-dd HH:mm:ss} - {threadMessage.Role,10}: ");
-
-            if(threadMessage.Role.ToString().ToLower() == "assistant")
+            // Process the message with the agent, asynchronously
+            ThreadRun run = await client.CreateRunAsync(thread.Id, agent.Id);
+            do
             {
-                foreach (MessageContent contentItem in threadMessage.ContentItems)
+                await Task.Delay(TimeSpan.FromMilliseconds(500));
+                run = await client.GetRunAsync(thread.Id, run.Id);
+            } while (run.Status == RunStatus.Queued || run.Status == RunStatus.InProgress);
+            Console.WriteLine($"Run finished with status: {run.Status}");
+
+            // Check the status of the run
+            if (run.Status == RunStatus.Failed)
+            {
+                Console.WriteLine($"Run failed with error: {run.LastError}");
+            }
+            else
+            {
+                // Get the response messages
+                Azure.Response<PageableList<ThreadMessage>> afterRunMessagesResponse = await client.GetMessagesAsync(thread.Id);
+                IReadOnlyList<ThreadMessage> messages = afterRunMessagesResponse.Value.Data;
+
+                // Print the last message from the assistant
+                var lastMessage = messages.Last(m => m.Role == MessageRole.Agent)?.ContentItems[0] as MessageTextContent;
+                if (lastMessage is not null)
                 {
-                    if (contentItem is MessageTextContent textItem)
+                    Console.WriteLine($"Last message: {lastMessage.Text}");
+
+                    // Save the file generated by the assistant
+                    foreach (var annotation in lastMessage.Annotations.OfType<MessageTextFilePathAnnotation>())
                     {
-                        Console.Write(textItem.Text);
-                        searchResult = textItem.Text;
+                        AgentFile agentFile = await client.GetFileAsync(annotation.FileId);
+                        BinaryData fileBytes = await client.GetFileContentAsync(annotation.FileId);
+
+                        var filePath = Path.Combine("./blog", Path.GetFileName(agentFile.Filename));
+                        Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+                        await File.WriteAllBytesAsync(filePath, fileBytes.ToArray());
                     }
-                    break;
                 }
             }
+
+            // Clean up resources
+            await client.DeleteThreadAsync(thread.Id);
+            await client.DeleteAgentAsync(agent.Id);
+
+            // Return the result
+            return "Saved";
         }
-
-        return searchResult;
-    }
-}
-```
-
-
-### Task 3.4: Create Chat Completion Agent
-Let's break down the implementation of the chat completion agent into steps:
-
-1. **Define Program Class Structure**
-    ```csharp
-    public partial class Program
-    {
-         const string HostName = "SeachAssistant";
-         const string HostInstructions = "Search information ";
     }
     ```
-    - Creates a partial class to implement the main program logic
-    - Defines constants for the assistant's name and instructions
 
-2. **Set Up Main Method**
+1. **Start Creating the Semantic Kernel Group Chat**
+
+    Delete the contents of `Program.cs` and import the necessary namespaces for the Azure SDKs at the top of your `Program.cs` file:
     ```csharp
-    public static async Task Main(string[] args)
-    {
-         var deployment = "gpt-4o";
-         var endpoint = "Your AOAI endpoint";
-         var key = "Your AOAI Key";
-    }
+    using Azure.Identity;
+    using Microsoft.SemanticKernel;
+    using Microsoft.SemanticKernel.Agents;
+    using Microsoft.SemanticKernel.ChatCompletion;
+    using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.SemanticKernel.Agents.Chat;
     ```
-    - Defines the entry point of the application
-    - Configures Azure OpenAI deployment settings
 
-3. **Initialize Semantic Kernel**
+    Explanation: These namespaces are required for accessing Azure services, handling kernel functionality, and managing HTTP requests and responses.
+
+1. **Load Configuration Settings**
+
+    Load the configuration settings from `appsettings.json` and user secrets in your `Program.cs` file:
     ```csharp
-    var kernel = Kernel.CreateBuilder()
-         .AddAzureOpenAIChatCompletion(deployment, endpoint, key)
-         .Build();
-    ```
-    - Creates a new kernel instance
-    - Adds Azure OpenAI chat completion capability
-
-4. **Configure Chat Completion Agent**
-    ```csharp
-    #pragma warning disable SKEXP0110
-    ChatCompletionAgent agent = new()
-    {
-         Instructions = HostInstructions,
-         Name = HostName,
-         Kernel = kernel,
-         Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings() 
-         { 
-              FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() 
-         }),
-    };
-    ```
-    - Creates a new chat completion agent
-    - Sets up agent properties and execution settings
-
-5. **Add Search Plugin**
-    ```csharp
-    KernelPlugin plugin = KernelPluginFactory.CreateFromType<SearchPlugin>();
-    agent.Kernel.Plugins.Add(plugin);
-    ```
-    - Creates a plugin instance from SearchPlugin type
-    - Adds the plugin to the kernel
-
-6. **Initialize Chat and Process Input**
-    ```csharp
-    ChatHistory chat = new ChatHistory();
-    var input = "Introduce Microsoft";
-    chat.Add(new ChatMessageContent(AuthorRole.User, input));
-    ```
-    - Creates a new chat history
-    - Adds user input to the chat
-
-7. **Process and Display Results**
-    ```csharp
-    var agentContent = agent.InvokeAsync(chat);
-    await foreach (var message in agentContent)
-
-    #pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-            Console.WriteLine($"# {message.AuthorName}: '{message.Content}'");
-    #pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-    ```
-    - Invokes the agent with the chat history
-    - Displays messages as they are received
-
-
-Complete Program class structure
-```csharp
-public partial class Program
-{
-    const string HostName = "SeachAssistant";
-    const string HostInstructions = "Search information ";
-
-    public static async Task Main(string[] args)
-    {
-    var deployment = "gpt-4o";
-    var endpoint = "AZURE_OPENAI_ENDPOINT"; // update to your Azure OpenAI endpoint
-    var key = "AZURE_OPENAI_KEY"; // Updated key placeholder
-
-    var kernel = Kernel.CreateBuilder()
-        .AddAzureOpenAIChatCompletion(deployment, endpoint, key)
+    // Load environment variables
+    var configuration = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: false)
         .Build();
+    ```
 
-#pragma warning disable SKEXP0110
+1. **Initialize the Semantic Kernel**
 
-    ChatCompletionAgent agent = new()
+    Create a new instance of the Semantic Kernel and configure it to use Azure OpenAI:
+    ```csharp
+    // Initialize the Semantic Kernel with Azure OpenAI
+    var kernel = Kernel.CreateBuilder()
+        .AddAzureOpenAIChatCompletion(
+            configuration["AzureAI:ModelDeploymentName"] ?? throw new ArgumentNullException("AzureAI:ModelDeploymentName"),
+            configuration["AzureAI:AzureOpenAIEndpoint"] ?? throw new ArgumentNullException("AzureAI:AzureOpenAIEndpoint"),
+            new DefaultAzureCredential())
+        .Build();
+    ```
+
+1. **Create the Search Agent**
+
+    Create the search agent using the `SearchPlugin` class and configure it with the SearchAgent tool as a plugin:
+    ```csharp
+    // Set up the Azure AI Agent as a Semantic Kernel assistant agent
+    ChatCompletionAgent search_agent = new()
     {
-        Instructions = HostInstructions,
-        Name = HostName,
+        Name = "SearchAgent",
+        Instructions = "You are a search expert, help me use tools to find relevant knowledge.",
         Kernel = kernel,
         Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() }),
     };
+    KernelPlugin search_plugin = KernelPluginFactory.CreateFromType<SearchPlugin>();
+    search_agent.Kernel.Plugins.Add(search_plugin);
+    ```
 
-    KernelPlugin plugin = KernelPluginFactory.CreateFromType<SearchPlugin>();
-    agent.Kernel.Plugins.Add(plugin);
+1. **Create the SaveBlog Agent**
 
-    ChatHistory chat = new ChatHistory();
+    Create the save blog agent using the `SaveBlogAgent` class and configure it with the Code Interpreter tool as a plugin:
+    ```csharp
+    // Set up the save blog Azure AI Agent as a Semantic Kernel assistant agent
+    ChatCompletionAgent save_blog_agent = new()
+    {
+        Name = "SaveBlogAgent",
+        Instructions = "Save blog content. Respond with 'Saved' when your blog is saved.",
+        Kernel = kernel,
+        Arguments = new KernelArguments(new AzureOpenAIPromptExecutionSettings() { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() }),
+    };
+    KernelPlugin save_blog_plugin = KernelPluginFactory.CreateFromType<SaveBlogAgent>();
+    save_blog_agent.Kernel.Plugins.Add(save_blog_plugin);
+    ```
 
-    var input = "Introduce Microsoft";
+1. **Create the Write Agent**
 
-    chat.Add(new ChatMessageContent(AuthorRole.User, input));
-    Console.WriteLine($"# {AuthorRole.User}: '{input}'");
+    Create the write agent to orchestrate the search and save blog agents:
+    ```csharp
+    // Set up the write blog Semantic Kernel agent
+    ChatCompletionAgent write_blog_agent = new()
+    {
+        Name = "WriteBlog",
+        Instructions = "You are a blog writer, please help me write a blog based on bing search content.",
+        Kernel = kernel
+    };
 
-    var agentContent = agent.InvokeAsync(chat);
+1. **Create the Group Chat**
 
-    await foreach (var message in agentContent)
-#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-            Console.WriteLine($"# {message.AuthorName}: '{message.Content}'");
-#pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+    Create a group chat with the search agent, write agent, and save blog agents, and reference a termination strategy that we will create later.
+    ```csharp
+    // Create a Semantic Kernel group chat with the agents
+    AgentGroupChat chat =
+        new(search_agent, write_blog_agent, save_blog_agent)
+        {
+            ExecutionSettings = new()
+            {
+                TerminationStrategy =
+                        new ApprovalTerminationStrategy()
+                        {
+                            // Only the save blog agent can terminate.
+                            Agents = [save_blog_agent],
+                            // Limit total number of turns
+                            MaximumIterations = 10,
+                        }
+            }
+        };
+    ```
+
+1. **Prepare a Message to Start the Chat**
+
+    Prepare the instructions for the agent group chat to work on:
+    ```csharp
+    // Prepare the message for the agent group chat
+    ChatMessageContent input = new(AuthorRole.User, """
+                I am writing a blog about GraphRAG. Search for the following 2 questions and write a blog based on the search results ,save it           
+                    1. What is Microsoft GraphRAG?
+                    2. Vector-based RAG vs GraphRAG
+                """);
+    chat.AddChatMessage(input);
+    ```
+
+1. **Run the Group Chat**
+
+    Run the group chat and wait for the results:
+    ```csharp
+    // Process the message with the agent group chat, asynchronously and output the results
+    await foreach (ChatMessageContent content in chat.InvokeAsync())
+    {
+        Console.WriteLine($"# {content.Role} - {content.AuthorName ?? "*"}: '{content.Content}'");
     }
-}
-```
+    ```
 
-Note: Replace the endpoint and key placeholders with your actual Azure OpenAI credentials before running the code.
+1. **Define the Termination Strategy**
 
-#### Replace Placeholder Values
-Replace "Your AOAI endpoint", "Your AOAI Key", and "Your Azure AI Agent Service Connection String" with your actual Azure OpenAI endpoint, key, and Azure AI Agent Service connection string.
+    Define the termination strategy for the group chat. In this case, we will use an approval strategy that allows only the save blog agent to terminate the chat:
+    ```csharp
+    internal sealed class ApprovalTerminationStrategy : TerminationStrategy
+    {
+        // Terminate when the final message contains the term "Saved"
+        protected override Task<bool> ShouldAgentTerminateAsync(Agent agent, IReadOnlyList<ChatMessageContent> history, CancellationToken cancellationToken)
+            => Task.FromResult(history[history.Count - 1].Content?.Contains("Saved", StringComparison.OrdinalIgnoreCase) ?? false);
+    }
+    ```
 
-## Step 4: Run the Application
-Build and run the application.
+1. **Run the Application**
 
-In Visual Studio, press F5 to build and run the application.
-In Visual Studio Code, use the terminal to run `dotnet run`.
-
-Verify the output.
-
-The application will output the results from the Azure AI Agent Service, displaying the search results for the query "Introduce South China Normal University".
+    Save the changes and run your application using the following command:
+    ```
+    dotnet run
+    ```
 
 
 ## Troubleshooting
