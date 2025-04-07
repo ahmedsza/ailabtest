@@ -189,11 +189,12 @@ Learn how to create and configure a web search agent using AutoGen and Azure AI 
 
     Create the search agent using the defined function:
     ```python
+    # Set up the Bing search Azure AI Agent as an Autogen assistant agent
     bing_search_agent = AssistantAgent(
-        name="assistant",
+        name="bing_search_agent",
         model_client=az_model_client,
         tools=[web_ai_agent],
-        system_message="Use tools to solve tasks.",
+        system_message="You are a search expert, help me use tools to find relevant knowledge.",
     )
     ```
 
