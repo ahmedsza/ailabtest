@@ -4,14 +4,7 @@
 Learn how to create and use an AI agent using Azure AI Agent Service with Bing Grounding in a C# console application.
 
 #### Prerequisites
-- Azure account with necessary permissions
-- .NET SDK installed
-- An IDE or text editor like Visual Studio or Visual Studio Code
-- Azure AI Project connection string
-- Deployed chat completion model, such as gpt-4o, in Azure AI Project
-- Bing Grounding resource created
-- Bing Grounding tool connection in Azure AI Project
-  - Refer to [Bing Grounding](bing_grounding.md) for more information
+- Pre-requisites are documented in the [PreReq](prereq/prereq.md) document.
 
 #### Step-by-Step Guide
 
@@ -21,31 +14,36 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     ```
     dotnet new console -n AzureAIAgent7
     cd AzureAIAgent7
-
     ```
 
-2. **Create Necessary User Secrets**
+1. **Add Necessary NuGet Packages**
 
-    Create user secrets by updating `"Your Azure AI Project Connection String"` with your actual connection string and running the following from the command line:
+    Add the required NuGet packages for Azure AI Agent Service and Azure Identity:
     ```
-    dotnet user-secrets init
-    dotnet user-secrets set "AzureAI:ProjectConnectionString" "Your Azure AI Project Connection String"
-
+    dotnet add package Azure.AI.Projects --version 1.0.0-beta.6
+    dotnet add package Azure.Identity
+    dotnet add package Microsoft.Extensions.Configuration
+    dotnet add package Microsoft.Extensions.Configuration.Json
     ```
 
-3. **Add Application Settings**
+1. **Add Application Settings**
 
     Create a new file named `appsettings.json` in the root of your project and add the following content, Replace the BINGCONNECTIONNAME with your Bing Connection Name:
     ```json
     {
         "AzureAI": {
-            "ModelName": "gpt-4o",
-            "BingConnectionName": "Your Bing Connection Name"
+            "ProjectConnectionString": "<your-connection-string>",
+            "ModelName": "<your-model-name>",
+            "BingConnectionName": "<your-bing-connection-name>"
         }
     }
     ```
+    **NOTE**: 
+    - Replace `<your-connection-string>` with your actual Azure AI Project connection string.
+    - Replace `<your-model-name>` with the name of the model you want to use (e.g., "gpt-4o").
+    - Replace `<your-bing-connection-name>` with the name of your Bing connection in your AI Project's management center.
 
-4. **Add appsettings.json to the Project**
+1. **Add appsettings.json to the Project**
 
     Ensure that `appsettings.json` is included in your project. You can do this by right-clicking on the project in Visual Studio and selecting "Add" > "Existing Item..." and then selecting `appsettings.json`.
     Alternatively, you can add it manually in the `.csproj` file by adding the following lines:
@@ -57,18 +55,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     </ItemGroup>
     ```
 
-4. **Add Necessary NuGet Packages**
-
-    Add the required NuGet packages for Azure AI Agent Service and Azure Identity:
-    ```
-    dotnet add package Azure.AI.Projects --version 1.0.0-beta.6
-    dotnet add package Azure.Identity
-    dotnet add package Microsoft.Extensions.Configuration
-    dotnet add package Microsoft.Extensions.Configuration.UserSecrets
-
-    ```
-
-5. **Import Namespaces**
+1. **Import Namespaces**
 
     Delete the contents of `Program.cs` and import the necessary namespaces for the Azure SDKs at the top of your `Program.cs` file:
     ```csharp
@@ -77,18 +64,17 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     using Microsoft.Extensions.Configuration;
     ```
 
-6. **Load Configuration Settings**
+1. **Load Configuration Settings**
 
     Load the configuration settings from `appsettings.json` and user secrets in your `Program.cs` file:
     ```csharp
     // Load environment variables
     var configuration = new ConfigurationBuilder()
         .AddJsonFile("appsettings.json", optional: false)
-        .AddUserSecrets<Program>()
         .Build();
     ```
 
-7. **Initialize the Project and Agents Client**
+1. **Initialize the Project and Agents Client**
 
 	Initialize the AIProjectClient and AgentsClient using your Azure AI Project connection string:
 	```csharp
@@ -99,7 +85,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     AgentsClient client = projectClient.GetAgentsClient();
 	```
 
-8. **Create a Bing Grounding Tool**
+1. **Create a Bing Grounding Tool**
 
     Create a Bing Grounding tool using the connection name
 	```csharp
@@ -111,7 +97,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     });
 	```
 
-9. **Create and Configure the Agent**
+1. **Create and Configure the Agent**
 
     Create and configure the web search agent:
     ```csharp
@@ -128,7 +114,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     );
     ```
 
-10. **Create a Thread and Message**
+1. **Create a Thread and Message**
 
 	Create a thread for communication and send a message with instructions for the agent:
 	```csharp
@@ -145,7 +131,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     );
 	```
 
-11. **Execute the Run**
+1. **Execute the Run**
 
 	Create and execute the run to process the message:
 	```csharp
@@ -159,7 +145,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     Console.WriteLine($"Run finished with status: {run.Status}");
 	```
 
-12. **Display the Response Message**
+1. **Display the Response Message**
 
 	Display the response message:
 	```csharp
@@ -183,7 +169,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     }
 	```
 
-13. **Delete the Thread and Agent**
+1. **Delete the Thread and Agent**
 
     After processing, delete the thread and agent to clean up resources:
     ```csharp
@@ -192,7 +178,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service with Bing G
     await client.DeleteAgentAsync(agent.Id);
     ```
 
-14. **Run the Application**
+1. **Run the Application**
     Save the changes and run your application using the following command:
     ```
     dotnet run
