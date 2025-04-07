@@ -4,67 +4,57 @@
 Learn how to create and configure a web search agent using AutoGen and Azure AI Agent Service to perform web searches.
 
 #### Prerequisites:
-- Azure account with necessary permissions
-- Python environment with required packages installed
-- Azure AI Project connection string
-- Deployed chat completion model, such as gpt-4o, in Azure AI Project
-- Bing Grounding resource created
-- Bing Grounding tool connection in Azure AI Project
-  - Refer to [Bing Grounding](bing_grounding.md) for more information
-- **IMPORTANT** - you might need to assign role Cognitive Services OpenAI User to the user for Azure AI Service associated with the Azure AI Project. This will be in Azure Portal under the Azure AI Service resource IAM settings.
-  
+- Pre-requisites are documented in the [PreReq](prereq/prereq.md) document.
+
 #### Step-by-Step Guide:
 
-1. **Setup, Create folder, setup virtual environment, install packages**
+1. **Setup**
+
+	Create the necessary environment for the lab. This includes creating a new directory, setting up a Python virtual environment, and installing required packages.
+
+	- Create a new directory for this lab:
+		```bash
+		mkdir ailab3
+		cd ailab3
+		```
+	- Open the folder in Visual Studio Code
+	- Open a terminal in VS Code, create and activate a Python virtual environment:
+
+		Windows:
+		```cmd
+		python -m venv .venv
+		.venv\Scripts\activate
+		```
+
+		Linux/macOS:
+		```bash
+		python3 -m venv .venv
+		source .venv/bin/activate
+		```
 
 
-	- Open your project folder
+	- Ensure you have the required packages installed. You will need the following packages. You can run this from the terminal:
 
-	Create a new directory for this lab:
-	```bash
-	mkdir ailab3
-	cd ailab3
-	```
-	Open the folder in Visual Studio Code
-
-	Open a terminal in VS Code, create and activate a Python virtual environment:
-
-	Windows:
-	```cmd
-	python -m venv .venv
-	.venv\Scripts\activate
-
-	```
-
-	Linux/macOS:
-	```bash
-	python3 -m venv .venv
-	source .venv/bin/activate
-
-	```
-
-
-	Ensure you have the required packages installed. You will need the following packages. You can run this from the terminal:
-
-	```python
-	pip install azure-ai-projects
-	pip install azure-identity
-	pip install dotenv
-	pip install autogen-agentchat
-	pip install autogen-ext[openai]
-
-	```
+		```python
+		pip install azure-ai-projects
+		pip install azure-identity
+		pip install dotenv
+        pip install autogen-agentchat
+	    pip install autogen-ext[openai]
+		```
 
 2. **Set Up Environment Variables**
 
-	Create a `.env` file in your project directory and add your Azure AI Project connection string, deployment model name, and other necessary configurations:
+	Create a `.env` file in your project directory and add your Azure AI Project connection string, deployment model name, and other necessary configurations. 
+    - The model name and model deployment name can be found in the Azure AI Project portal under "Models and Endpoints", using the value in the "Name" column for `MODEL_DEPLOYMENT_NAME`, and the value in the "Model name" column for `MODEL_NAME`. 
+    - The Azure OpenAI endpoint can be found by clicking on the "Get endpoint" button in the same view.
+    - The Bing connection name can be clicking "Management center" in the bottom left, and then clicking "Connected resources". Look for the connection with a targer of "htts://api.bing.microsot.com".
 	```plaintext
 	PROJECT_CONNECTION_STRING=""
 	MODEL_DEPLOYMENT_NAME=""
 	MODEL_NAME=""
 	AZURE_OPENAI_ENDPOINT=""
 	BING_CONNECTION_NAME=""
-
 	```
 
 3. **Create an Azure AI Agent using Bing Grounding Tool**
@@ -150,7 +140,7 @@ Learn how to create and configure a web search agent using AutoGen and Azure AI 
 
 4. **Create the AutoGen Agent**
 
-    In a new file, named step3.py, import the necessary libraries for the AutoGen Agent and Azure AI Agent Service:
+    In a new file, named `lab3.py`, import the necessary libraries for the AutoGen Agent and Azure AI Agent Service:
     ```python
     from autogen_agentchat.agents import AssistantAgent
     from autogen_agentchat.messages import TextMessage
@@ -232,7 +222,7 @@ Learn how to create and configure a web search agent using AutoGen and Azure AI 
 11. **Run and Validate**
    In VS Code with the terminal activated, run the Python script:
    ```bash
-   python step3.py
+   python lab3.py
    ```
    Alternatively with the python file open, click the run button at the top right
 
