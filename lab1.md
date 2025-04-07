@@ -4,47 +4,42 @@
 Learn how to create and configure a code interpreter agent using Azure AI Agent Service to execute Python code and save output to a file.
 
 #### Prerequisites:
-- Azure account with necessary permissions
-- Python environment with required packages installed
-- Azure AI Project connection string
-- Deployed chat completion model, such as gpt-4o, in Azure AI Project
+- Pre-requisites are documented in the [PreReq](prereq/prereq.md) document.
 
 #### Step-by-Step Guide:
 
-1. **Setup, Create folder, setup virtual environment, install packages**
+1. **Setup**
+
+	Create the necessary environment for the lab. This includes creating a new directory, setting up a Python virtual environment, and installing required packages.
+
+	- Create a new directory for this lab:
+		```bash
+		mkdir ailab1
+		cd ailab1
+		```
+	- Open the folder in Visual Studio Code
+	- Open a terminal in VS Code, create and activate a Python virtual environment:
+
+		Windows:
+		```cmd
+		python -m venv .venv
+		.venv\Scripts\activate
+		```
+
+		Linux/macOS:
+		```bash
+		python3 -m venv .venv
+		source .venv/bin/activate
+		```
 
 
-	- Open your project folder
+	- Ensure you have the required packages installed. You will need the following packages. You can run this from the terminal:
 
-	Create a new directory for this lab:
-	```bash
-	mkdir ailab1
-	cd ailab1
-	```
-	Open the folder in Visual Studio Code
-
-	Open a terminal in VS Code, create and activate a Python virtual environment:
-
-	Windows:
-	```cmd
-	python -m venv .venv
-	.venv\Scripts\activate
-	```
-
-	Linux/macOS:
-	```bash
-	python3 -m venv .venv
-	source .venv/bin/activate
-	```
-
-
-	Ensure you have the required packages installed. You will need the following packages. You can run this from the terminal:
-
-	```python
-	pip install azure-ai-projects
-	pip install azure-identity
-	pip install dotenv
-	```
+		```python
+		pip install azure-ai-projects
+		pip install azure-identity
+		pip install dotenv
+		```
 
 2. **Set Up Environment Variables**
 
@@ -70,9 +65,6 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 
 4. **Initialize the Project Client**
 
-	
-	
-	```python
 	Initialize the AIProjectClient using your Azure AI Project connection string:
 	```python
 	# Set up the project client
@@ -103,60 +95,60 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 
 	Create a thread for communication and send a message with instructions for the agent:
 	```python
-        # Create a thread for our interaction with the agent
-        thread = project_client.agents.create_thread()
+		# Create a thread for our interaction with the agent
+		thread = project_client.agents.create_thread()
 
-        # Create a message to send to the agent on the created thread
-        message = project_client.agents.create_message(
-            thread_id=thread.id,
-            role="user",
-            content="""
-                You are my Python programming assistant. Generate code and execute it according to the following requirements:
+		# Create a message to send to the agent on the created thread
+		message = project_client.agents.create_message(
+			thread_id=thread.id,
+			role="user",
+			content="""
+				You are my Python programming assistant. Generate code and execute it according to the following requirements:
 
-                1. Save "this is blog" to blog-{YYMMDDHHMMSS}.md
-                2. Give me the download link for this file
-            """,
-        )
+				1. Save "this is blog" to blog-{YYMMDDHHMMSS}.md
+				2. Give me the download link for this file
+			""",
+		)
 	```
 
 7. **Execute the Run**
 
 	Create and execute the run to process the message:
 	```python
-        # Process the message with the agent, synchronously
-        run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
-        print(f"Run finished with status: {run.status}")
+		# Process the message with the agent, synchronously
+		run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
+		print(f"Run finished with status: {run.status}")
 	```
 
 8. **Display the Response Message and Save File**
 
 	Display the response message, retrieve the generated file and save it locally:
 	```python
-        # Check the status of the run
-        if run.status == "failed":
-            print(f"Run failed: {run.last_error}")
-        else:
-            # Get the response messages
-            messages = project_client.agents.list_messages(thread_id=thread.id)
+		# Check the status of the run
+		if run.status == "failed":
+			print(f"Run failed: {run.last_error}")
+		else:
+			# Get the response messages
+			messages = project_client.agents.list_messages(thread_id=thread.id)
 
-            # Print the last message from the assistant
-            last_msg = messages.get_last_message_by_role("assistant")
-            if last_msg:
-                print(f"Last Message: {last_msg.content[0].text.value}")
+			# Print the last message from the assistant
+			last_msg = messages.get_last_message_by_role("assistant")
+			if last_msg:
+				print(f"Last Message: {last_msg.content[0].text.value}")
 
-            # Save the file generated by the assistant
-            for file_path_annotation in messages.file_path_annotations:
-                file_name = os.path.basename(file_path_annotation.text)
-                project_client.agents.save_file(file_id=file_path_annotation.file_path.file_id, file_name=file_name, target_dir="./blog")
+			# Save the file generated by the assistant
+			for file_path_annotation in messages.file_path_annotations:
+				file_name = os.path.basename(file_path_annotation.text)
+				project_client.agents.save_file(file_id=file_path_annotation.file_path.file_id, file_name=file_name, target_dir="./blog")
 	```
 
 9. **Delete the Thread and Agent**
 
     After processing, delete the thread and agent to clean up resources:
     ```python
-        # Clean up resources
-    	project_client.agents.delete_thread(thread.id)
-        project_client.agents.delete_agent(agent.id)
+		# Clean up resources
+		project_client.agents.delete_thread(thread.id)
+		project_client.agents.delete_agent(agent.id)
     ```
 
 10. **View the File**
