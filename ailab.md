@@ -14,8 +14,7 @@ This document outlines all the labs, provides quick navigation links to each ste
 - [Step 5 – Code Interpreter Agent (C#)](lab5.md)
 - [Step 6 – File Upload & Search Agent (C#)](lab6.md)
 - [Step 7 – Bing Grounding Web Search Agent (C#)](lab7.md)
-- [Step 8 – Semantic Kernel with Bing Grounding (C#)](lab8.md)
-- [Step 9 – Enhanced Semantic Kernel Agent (C#)](lab9.md)
+- [Step 8 – Orchestratiung AI Agents with Semnatic Kernel (C#)](lab8.md)
 
 ---
 ## Details of Each Step
@@ -41,8 +40,6 @@ Demonstrates how to build a C# application that uploads files, creates a vector 
 ### [Lab 7 – Bing Grounding Web Search Agent (C#)](lab7.md)
 Shows you how to construct a C# agent that employs Bing Grounding for conducting web searches and retrieving relevant results.
 
-### [Lab 8 – Semantic Kernel with Bing Grounding (C#)](lab8.md)
-Integrates Semantic Kernel with Azure OpenAI Chat Completion and Bing Grounding in a C# console app for advanced search and chat capabilities.
+### [Lab 8 – Orchestratiung AI Agents with Semnatic Kernel (C#)](lab8.md)
+Orchestrates multiple AI agents (for search, blog writing, and saving) to complete a blog writing task through coordinated teamwork.
 
-### [Lab 9 – Enhanced Semantic Kernel Agent (C#)](lab9.md)
-Extends the Semantic Kernel integration by providing an enhanced setup that details configuration and execution for a complete AI agent run.
