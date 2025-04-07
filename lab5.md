@@ -16,10 +16,6 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
     cd AzureAIAgent5
     ```
 
-1. **Prepare a Sample File**
-
-    Create a folder `data` in the AzureAIAgent5 directory. Copy intro_rag.md from the repo into the data directory.
-
 1. **Add Necessary NuGet Packages**
 
     Add the required NuGet packages for Azure AI Agent Service and Azure Identity:
