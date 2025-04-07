@@ -105,7 +105,7 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 			content="""
 				You are my Python programming assistant. Generate code and execute it according to the following requirements:
 
-				1. Save "this is blog" to blog-{YYMMDDHHMMSS}.md
+				1. Create a short blog post on the marvels of AI and save the content to blog-{YYMMDDHHMMSS}.md
 				2. Give me the download link for this file
 			""",
 		)
