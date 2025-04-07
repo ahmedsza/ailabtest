@@ -4,11 +4,7 @@
 Learn how to create and use an AI agent using Azure AI Agent Service in a C# console application to generate and save blog content.
 
 #### Prerequisites
-- Azure account with necessary permissions
-- .NET SDK installed
-- An IDE or text editor like Visual Studio or Visual Studio Code
-- Azure AI Project connection string
-- Deployed chat completion model, such as gpt-4o, in Azure AI Project
+- Pre-requisites are documented in the [PreReq](prereq/prereq.md) document.
 
 #### Step-by-Step Guide
 
@@ -18,33 +14,38 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
     ```
     dotnet new console -n AzureAIAgent5
     cd AzureAIAgent5
-
     ```
 
-    Create a folder data in the AzureAIAgent5 directory. Copy intro_rag.md from the repo into the data directory.
+1. **Prepare a Sample File**
 
-    
-2. **Create Necessary User Secrets**
+    Create a folder `data` in the AzureAIAgent5 directory. Copy intro_rag.md from the repo into the data directory.
 
-    Create user secrets by updating `"Your Azure AI Project Connection String"` with your actual connection string and running the following from the command line:
+1. **Add Necessary NuGet Packages**
+
+    Add the required NuGet packages for Azure AI Agent Service and Azure Identity:
     ```
-    dotnet user-secrets init
-    dotnet user-secrets set "AzureAI:ProjectConnectionString" "Your Azure AI Project Connection String"
-
+    dotnet add package Azure.AI.Projects --version 1.0.0-beta.6
+    dotnet add package Azure.Identity
+    dotnet add package Microsoft.Extensions.Configuration
+    dotnet add package Microsoft.Extensions.Configuration.Json
     ```
 
-3. **Add Application Settings**
+1. **Add Application Settings**
 
     Create a new file named `appsettings.json` in the root of your project and add the following content:
     ```json
     {
         "AzureAI": {
-            "ModelName": "gpt-4o"
+            "ProjectConnectionString": "<your-connection-string>",
+            "ModelName": "<your-model-name>"
         }
     }
     ```
+    **NOTE**: 
+    - Replace `<your-connection-string>` with your actual Azure AI Project connection string.
+    - Replace `<your-model-name>` with the name of the model you want to use (e.g., "gpt-4o").
 
-4. **Add appsettings.json to the Project**
+1. **Add appsettings.json to the Project**
 
     Ensure that `appsettings.json` is included in your project. You can do this by right-clicking on the project in Visual Studio and selecting "Add" > "Existing Item..." and then selecting `appsettings.json`.
     Alternatively, you can add it manually in the `.csproj` file by adding the following lines:
@@ -56,18 +57,8 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
     </ItemGroup>
     ```
 
-4. **Add Necessary NuGet Packages**
 
-    Add the required NuGet packages for Azure AI Agent Service and Azure Identity:
-    ```
-    dotnet add package Azure.AI.Projects --version 1.0.0-beta.6
-    dotnet add package Azure.Identity
-    dotnet add package Microsoft.Extensions.Configuration
-    dotnet add package Microsoft.Extensions.Configuration.UserSecrets
-
-    ```
-
-5. **Import Namespaces**
+1. **Import Namespaces**
 
     Delete the contents of `Program.cs` and import the necessary namespaces for the Azure SDKs at the top of your `Program.cs` file:
     ```csharp
@@ -76,18 +67,17 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
     using Microsoft.Extensions.Configuration;
     ```
 
-6. **Load Configuration Settings**
+1. **Load Configuration Settings**
 
     Load the configuration settings from `appsettings.json` and user secrets in your `Program.cs` file:
     ```csharp
     // Load environment variables
     var configuration = new ConfigurationBuilder()
         .AddJsonFile("appsettings.json", optional: false)
-        .AddUserSecrets<Program>()
         .Build();
     ```
 
-7. **Initialize the Project Client**
+1. **Initialize the Project Client**
 
 	Initialize the AIProjectClient using your Azure AI Project connection string:
 	```csharp
@@ -97,7 +87,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
         new DefaultAzureCredential());
 	```
 
-8. **Create and Configure the Agent**
+1. **Create and Configure the Agent**
 
 	Create and configure the code interpreter agent:
 	```csharp
@@ -113,7 +103,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
     );
 	```
 
-9. **Create a Thread and Message**
+1. **Create a Thread and Message**
 
 	Create a thread for communication and send a message with instructions for the agent:
 	```csharp
@@ -127,13 +117,13 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
         @"
             You are my Python programming assistant. Generate code and execute it according to the following requirements:
 
-            1. Save 'this is blog' to blog-{YYMMDDHHMMSS}.md
+            1. Create a short blog post on the marvels of AI and save the content to blog-{YYMMDDHHMMSS}.md
             2. Give me the download link for this file
         "
     );
 	```
 
-10. **Execute the Run**
+1. **Execute the Run**
 
 	Create and execute the run to process the message:
 	```csharp
@@ -147,7 +137,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
     Console.WriteLine($"Run finished with status: {run.Status}");
 	```
 
-11. **Display the Response Message and Save File**
+1. **Display the Response Message and Save File**
 
 	Display the response message, retrieve the generated file and save it locally:
 	```csharp
@@ -182,7 +172,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
     }
 	```
 
-12. **Delete the Thread and Agent**
+1. **Delete the Thread and Agent**
 
     After processing, delete the thread and agent to clean up resources:
     ```csharp
@@ -191,7 +181,7 @@ Learn how to create and use an AI agent using Azure AI Agent Service in a C# con
     await client.DeleteAgentAsync(agent.Id);
     ```
 
-13. **Run the Application**
+1. **Run the Application**
     Save the changes and run your application using the following command:
     ```
     dotnet run
