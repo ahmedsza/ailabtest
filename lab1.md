@@ -50,8 +50,8 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 	```
 
 3. **Import Necessary Libraries**
-	Create a file eg  `lab1.py` 
-	Import the necessary libraries for Azure AI Agent Service, and load the environment variables:
+
+	Create a file eg  `lab1.py`, import the necessary libraries for Azure AI Agent Service, and load the environment variables:
 	```python
 	from azure.ai.projects import AIProjectClient
 	from azure.ai.projects.models import CodeInterpreterTool
