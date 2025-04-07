@@ -8,7 +8,7 @@
   - connection string
   - endpoint URL
   - key
-- Bing Grounding Setup. See [Grounding with Bing Search Setup](lab08_grounding.md)
+- Bing Grounding Setup. See [Grounding with Bing Search Setup](bing_grounding.md)
 - Azure OpenAI deployment, such as gpt-4o, in Azure AI Project. Note that gpt-4o-mini is not supported with Bing Grounding. 
 - Appropriate permissions to Azure AI Project
 - Logged into appropriate Azure subscription via Azure CLI
