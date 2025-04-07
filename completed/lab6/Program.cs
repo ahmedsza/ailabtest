@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 // Load environment variables
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false)
-    .AddUserSecrets<Program>()
     .Build();
 
 // Set up the project client
@@ -15,7 +14,7 @@ AgentsClient client = new AgentsClient(
 
 // Upload the local file to Azure
 AgentFile uploadedAgentFile = await client.UploadFileAsync(
-    filePath: "../data/intro_rag.md",
+    filePath: "./data/intro_rag.md",
     purpose: AgentFilePurpose.Agents
 );
 
