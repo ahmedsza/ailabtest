@@ -10,7 +10,7 @@ IConfigurationRoot configuration = new ConfigurationBuilder()
 // Set up the project client
 AgentsClient client = new AgentsClient(
     configuration["AzureAI:ProjectConnectionString"],
-    new AzureCliCredential());
+    new DefaultAzureCredential());
 
 // Create a Code Interpreter tool
 var codeInterpreter = new CodeInterpreterToolDefinition();
