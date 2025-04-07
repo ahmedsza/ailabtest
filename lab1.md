@@ -85,7 +85,7 @@ Learn how to create and configure a code interpreter agent using Azure AI Agent 
 		# Create an agent with the Code Interpreter tool
 		agent = project_client.agents.create_agent(
 			model=os.environ["MODEL_DEPLOYMENT_NAME"],
-			name="my-agent",
+			name="ai-lab-agent1",
 			instructions="You are a helpful agent",
 			tools=code_interpreter.definitions,
 		)
