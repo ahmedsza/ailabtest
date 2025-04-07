@@ -27,3 +27,8 @@ obj/
 .vscode/
 .history/
 *.code-workspace
+
+ailab*
+AzureAIAgent*/
+blog
+appsettings.json
