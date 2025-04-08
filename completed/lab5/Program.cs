@@ -3,9 +3,8 @@ using Azure.Identity;
 using Microsoft.Extensions.Configuration;
 
 // Load environment variables
-var configuration = new ConfigurationBuilder()
+IConfigurationRoot configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false)
-    .AddUserSecrets<Program>()
     .Build();
 
 // Set up the project client
@@ -34,7 +33,7 @@ ThreadMessage message = await client.CreateMessageAsync(
     @"
         You are my Python programming assistant. Generate code and execute it according to the following requirements:
 
-        1. Save 'this is blog' to blog-{YYMMDDHHMMSS}.md
+        1. Create a short blog post on the marvels of AI and save the content to blog-{YYMMDDHHMMSS}.md
         2. Give me the download link for this file
     "
 );
