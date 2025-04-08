@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 // Load environment variables
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false)
-    .AddUserSecrets<Program>()
     .Build();
 
 // Set up the project and agents client
@@ -41,7 +40,7 @@ ThreadMessage message = await client.CreateMessageAsync(
     thread.Id,
     MessageRole.User,
     @"
-        What's Microsoft?
+        What is GitHub Copilot?
     "
 );
 
