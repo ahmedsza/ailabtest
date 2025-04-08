@@ -4,3 +4,4 @@
 - https://www.developerscantina.com/p/semantic-kernel-multiagents/
 - https://github.com/microsoft/semantic-kernel/blob/main/dotnet/samples/GettingStartedWithAgents/README.md
 - https://github.com/microsoft/semantic-kernel/blob/main/dotnet/samples/Concepts/Agents/ComplexChat_NestedShopper.cs
+- https://medium.com/data-science-collective/i-created-my-first-mcp-server-with-net-c-mcp-sdk-step-by-step-guide-c28aefe5fc94 
