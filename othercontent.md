@@ -1,0 +1,6 @@
+- https://github.com/farzad528/azure-ai-agents-playground
+- https://github.com/matthewbolanos/sk-azure-agent-demo
+- https://farzzy.hashnode.dev/streamlining-insurance-claim-analysis-with-semantic-kernels-multi-agent-orchestration
+- https://www.developerscantina.com/p/semantic-kernel-multiagents/
+- https://github.com/microsoft/semantic-kernel/blob/main/dotnet/samples/GettingStartedWithAgents/README.md
+- https://github.com/microsoft/semantic-kernel/blob/main/dotnet/samples/Concepts/Agents/ComplexChat_NestedShopper.cs
