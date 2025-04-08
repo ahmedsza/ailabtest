@@ -46,7 +46,7 @@ Learn how to create and configure a web search agent using Semantic Kernel and A
             "ModelName": "<your-model-name>",
             "BingConnectionName": "<your-bing-connection-name>",
             "ModelDeploymentName": "<your-model-deployment-name>",
-            "AzureOpenAIEndpoint": "<your-azure-openai-endpoint>",
+            "AzureOpenAIEndpoint": "<your-azure-openai-endpoint>"
         }
     }
     ```
