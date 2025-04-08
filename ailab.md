@@ -40,6 +40,6 @@ Demonstrates how to build a C# application that uploads files, creates a vector 
 ### [Lab 7 – Bing Grounding Web Search Agent (C#)](lab7.md)
 Shows you how to construct a C# agent that employs Bing Grounding for conducting web searches and retrieving relevant results.
 
-### [Lab 8 – Orchestratiung AI Agents with Semnatic Kernel (C#)](lab8.md)
+### [Lab 8 – Orchestrating AI Agents with Semnatic Kernel (C#)](lab8.md)
 Orchestrates multiple AI agents (for search, blog writing, and saving) to complete a blog writing task through coordinated teamwork.
 
