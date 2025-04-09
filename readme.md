@@ -11,7 +11,7 @@ Visit [AI Labs](ailab.md) for a series of 9 labs that are hosted in this repo
 - ### Additional Labs
 Depending on your experience, and time available, review additional content listed in [Aditional Labs](materials.md)
 
-- ### Additional 
+- ### Links to additional content 
 A set of raw miscellaneous links that might be useful   [Additional materials](additional_content.md)
 
 
