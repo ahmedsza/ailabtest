@@ -8,7 +8,10 @@ There are 2 routes you can follow, or both:
 - ### Labs hosted in this repo
 Visit [AI Labs](ailab.md) for a series of 9 labs that are hosted in this repo
 
-- ### Additional material
-Depending on your experience, and time available, review additional content listed in [Materials](materials.md)
+- ### Additional Labs
+Depending on your experience, and time available, review additional content listed in [Aditional Labs](materials.md)
+
+- ### Additional 
+A set of raw miscellaneous links that might be useful   [Additional materials](additional_content.md)
 
 
